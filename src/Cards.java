@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 /* Cards.java
  * By Samuel Baxter
  * COMP2911
@@ -17,6 +15,9 @@ public enum Cards {
     MERCATUS (0, 6, 3),
     BASILICA (0, 6, 5),
     TEMPLUM (0, 2, 2),
+    ARCHITECTUS (1, 3, 4),
+    GLADIATOR (1, 6, 5),
+    SENATOR (1, 3, 3),
     NOTACARD (-1 ,0 ,0);
     
     public final static int BUILDING = 0;
@@ -50,6 +51,7 @@ public enum Cards {
                 
                     value = Interface.getActionInput("Please enter the number of victory points you want to buy");
                     if (value <= money) {
+                        
                         players[whoseTurn].addVictoryPoints(value);
                         players[whoseTurn].addMoney(-money * 2);
                     
@@ -91,6 +93,20 @@ public enum Cards {
                     
                 }
                 
+            } else if (position == 0) {
+                
+                if (players[whoseTurn].getCardsInPlay()[position + 1] == BASILICA) {
+                    
+                    basilica++;
+                    
+                }
+                
+                if (players[whoseTurn].getCardsInPlay()[position + 1] == TEMPLUM) {
+                    
+                    templum = true;
+                    
+                }
+                
             } else {
                 
                 if (players[whoseTurn].getCardsInPlay()[position - 1] == BASILICA) {
@@ -118,7 +134,7 @@ public enum Cards {
             
             if (templum) {
                 
-                if (Interface.getInput("Do you wish to use the Templum?").equals("y")) {
+                if (Interface.getInput("Do you wish to use the Templum?").equals("yes")) {
                     
                     int value = -1;
                         
@@ -232,8 +248,101 @@ public enum Cards {
             players[whoseTurn].addVictoryPoints(counter);
             
             
+        } else if (c == ARCHITECTUS) {
+            
+            // print out their hand
+            // check card is a building card
+            // select which cards to lay
+            // lay card
+            // refund cost
+            
+            boolean finished = false;
+            Cards[] hand = players[whoseTurn].getHand();
+            Interface.print("Your Hand:\n");
+            String card = "";
+            position = 0;
+            
+            for (i = 0; i < hand.length; i++) {
+                
+                if (hand[i].getType() == BUILDING) {
+                
+                    Interface.print(hand[i].toString() + "\n");
+                
+                }
+                
+            }
+            
+            while (!finished) {
+                
+                card = Interface.getInput("Which card would you like to lay?");
+                card = card.toUpperCase();
+                
+                while ((position < 0) || (position > 6)) {
+                    
+                    position = Interface.getActionInput("Where would you like to place this card?");
+                    
+                    if ((position < 0) || (position > 6)) {
+                        
+                        Interface.printE("Invalid Position\n");
+                        
+                    }
+                        
+                }
+                
+                players[whoseTurn].layCard(valueOf(card), position);
+                
+                players[whoseTurn].addMoney(valueOf(card).getMoneyCost());
+   
+            }
+            
+        } else if (c == SENATOR) {
+            
+            // print out their hand
+            // check card is a character card
+            // select which cards to lay
+            // lay card
+            // refund cost
+            
+            boolean finished = false;
+            Cards[] hand = players[whoseTurn].getHand();
+            Interface.print("Your Hand:\n");
+            String card = "";
+            position = 0;
+            
+            for (i = 0; i < hand.length; i++) {
+                
+                if (hand[i].getType() == CHARACTER) {
+                
+                    Interface.print(hand[i].toString() + "\n");
+                
+                }
+                
+            }
+            
+            while (!finished) {
+                
+                card = Interface.getInput("Which card would you like to lay?");
+                card = card.toUpperCase();
+                
+                while ((position < 0) || (position > 6)) {
+                    
+                    position = Interface.getActionInput("Where would you like to place this card?");
+                    
+                    if ((position < 0) || (position > 6)) {
+                        
+                        Interface.printE("Invalid Position\n");
+                        
+                    }
+                        
+                }
+                
+                players[whoseTurn].layCard(valueOf(card), position);
+                
+                players[whoseTurn].addMoney(valueOf(card).getMoneyCost());
+   
+            }
+            
         }
-        
         
     }
     
@@ -252,6 +361,21 @@ public enum Cards {
     public int getType() {
         
         return type;
+        
+    }
+    
+    public boolean isActivatable (Cards c) {
+        
+        boolean result = true;
+        
+        if ((c == TEMPLUM) || (c == BASILICA)) {
+            
+            result = false;
+            
+        }
+        
+        
+        return result;
         
     }
 

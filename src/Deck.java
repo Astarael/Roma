@@ -17,12 +17,14 @@ public class Deck {
     public final static int NUM_MERCATUS = 2;
     public final static int NUM_BASILICA = 2;
     public final static int NUM_TEMPLUM = 2;
+    public final static int NUM_LEGAT = 2;
+    public final static int NUM_ARCHITECTUS = 2;
+    public final static int NUM_SENATOR = 2;
     
     public final static int NUM_SWAP = 4;
 
     public final static int NUM_CARDS = 52;
     public final static int NUM_START_CARDS = 4;
-    
 
     private Cards[] cards;
     private Cards[] discard;
@@ -88,6 +90,27 @@ public class Deck {
         for (i = 0; i < NUM_TEMPLUM; i++) {
             
             cards[j] = Cards.TEMPLUM;
+            j++;
+            
+        }
+        
+        for (i = 0; i < NUM_LEGAT; i++) {
+            
+            cards[j] = Cards.LEGAT;
+            j++;
+            
+        }
+        
+        for (i = 0; i < NUM_ARCHITECTUS; i++) {
+            
+            cards[j] = Cards.ARCHITECTUS;
+            j++;
+            
+        }
+        
+        for (i = 0; i < NUM_SENATOR; i++) {
+            
+            cards[j] = Cards.SENATOR;
             j++;
             
         }
@@ -189,7 +212,6 @@ public class Deck {
         }
         
     }
-    
     
     private Cards getSwapCard (int whoseTurn, Cards[] hand) {
         

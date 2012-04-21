@@ -40,7 +40,7 @@ public class Player {
         }
         
         /**
-         * Create a Player. cards is an ArrayList of cards
+         * Create a Player. Cards is an ArrayList of cards
          */
         
     }
@@ -114,6 +114,7 @@ public class Player {
         
     }
     
+    // discard the other card
     public Cards layCard (Cards c, int position) {
         
         Cards temp = cardsInPlay[position];
@@ -127,6 +128,7 @@ public class Player {
             if (hand[i] == c) {
                 
                 hand[i] = Cards.NOTACARD;
+                i = hand.length;
                 
             }
             

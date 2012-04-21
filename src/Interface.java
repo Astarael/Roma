@@ -60,17 +60,18 @@ public class Interface {
         
         input = -1;
 
-        while ((input < 0) || (input > 4)) {
+        while ((input < Game.END_TURN) || (input > Game.READ_RULES)) {
 
             System.out.println("Which action would you like to perform?");
             System.out.println(Game.END_TURN + " - End turn");
             System.out.println(Game.BUY_MONEY + " - Use a die to buy money");
             System.out.println(Game.BUY_CARDS + " - Use a die to get more cards");
             System.out.println(Game.ACTIVATE_CARD + " - Use a die to activate a card");
+            System.out.println(Game.LAY_CARD + " - Lay a card");
             System.out.println(Game.READ_RULES + " - Read the rules");
             input = sc.nextInt();
 
-            if ((input < Game.END_TURN) || (Game.READ_RULES > 4)) {
+            if ((input < Game.END_TURN) || (input > Game.READ_RULES)) {
 
                 System.out.println ("Invalid Action");
 
@@ -83,40 +84,7 @@ public class Interface {
 
     }
     
-    
-    public static int getDieInput(String action) {
-        
-        input = -1;
-        boolean valid = false;
-        
-        while ((input < 0) || (input > Game.NUM_SIDES_ON_DICE) || (valid == false)) {
-            
-            System.out.println ("Enter the value (1 - " + Game.NUM_SIDES_ON_DICE + ") of the die you wish to use to " + action);
-            input = sc.nextInt();
-        
-            valid = g.useDie(input);
-            
-            if (valid == false) {
-            
-                System.out.println ("Invalid die number");
-                
-            }
-            
-            if (input == 0){
-                
-                break;
-                
-            }
-            
-        }
-        
-        
-        return input;
-        
-    }
-    
-    
-    public static void displayBoard(int player1VP, int player2VP, int player1M, int player2M,
+    public static void updateBoard(int player1VP, int player2VP, int player1M, int player2M,
             int turn, Cards[] cards, Cards[] cards2, Die[] die) {
 
         System.out.println("Player 1\t\t\tPlayer 2");
@@ -126,7 +94,7 @@ public class Interface {
         Cards temp2;
         turn++;
 
-        for (i = 1; i <= Game.NUM_SIDES_ON_DICE; i++) {
+        for (i = 0; i <= Game.NUM_SIDES_ON_DICE; i++) {
             
             temp1 = g.players[0].getCardsInPlay()[i];
             temp2 = g.players[1].getCardsInPlay()[i];
@@ -173,12 +141,44 @@ public class Interface {
 
     }
     
+    
+    public static int getDieInput(String action) {
+        
+        input = -1;
+        boolean valid = false;
+        
+        while ((input < 0) || (input > Game.NUM_SIDES_ON_DICE) || (valid == false)) {
+            
+            System.out.println ("Enter the value (1 - " + Game.NUM_SIDES_ON_DICE + ") of the die you wish to use to " + action);
+            input = sc.nextInt();
+            
+            valid = g.useDie(input);
+            
+            if (valid == false) {
+            
+                System.out.println ("Invalid die number");
+                
+            }
+            
+            if (input == 0){
+                
+                break;
+                
+            }
+            
+        }
+        
+        return input;
+        
+    }
+    
+    
     public static String getInput (String s) {
         
         System.out.println(s);
+        s = sc.next();
         
-        return sc.next();
-        
+        return s;
         
     }
     
@@ -288,23 +288,44 @@ public class Interface {
     
     public static void print (String s) {
         
-        System.out.printf (s);
+        System.out.printf (s + "\n");
         
     }
     
     public static int pickACard() {
         
         int temp = 0;
+        int i = 0;
+        boolean validDieNum = false;
         
-        while ((temp <= 0) || (temp > 6)) {
+        while (validDieNum == false) {
             
             System.out.println ("Enter the dice disk number of the card you wish to use");
         
             temp = sc.nextInt();
-        
-            if ((temp <=0) || (temp > 6)) {
+            Die[] die = g.getDice();
+            
+            if ((temp >= 0) && (temp <= 6)) {
                 
-                System.out.println ("Invalid Disk Number");
+                for (i = 0; (i < Game.NUM_DICE) && (!validDieNum); i++) {
+                    
+                    if ((die[i].getValue() == temp) || (temp == 0)) {
+                        
+                        if (g.players[g.whoseTurn()].getCardsInPlay()[temp] != Cards.NOTACARD) {
+                            
+                            validDieNum = true;
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            if (!validDieNum) {
+                    
+                System.err.println ("Invalid Disk Number");
                 
             }
                 
