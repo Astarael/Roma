@@ -282,7 +282,7 @@ public class Interface {
     
     public static void printE (String s) {
         
-        System.err.println (s);
+        System.err.printf (s + "\n");
         
     }
     
@@ -309,11 +309,32 @@ public class Interface {
                 
                 for (i = 0; (i < Game.NUM_DICE) && (!validDieNum); i++) {
                     
-                    if ((die[i].getValue() == temp) || (temp == 0)) {
+                    if (die[i].getValue() == temp) {
                         
                         if (g.players[g.whoseTurn()].getCardsInPlay()[temp] != Cards.NOTACARD) {
                             
                             validDieNum = true;
+                            
+                        }
+                        
+                    }
+                    
+                    else if (temp == 0) {
+                        
+                        // check player has at least as much money as the value of the die
+                        // subtract the value
+                        if (g.players[g.whoseTurn()].getMoney() < die[i].getValue()) {
+                            
+                            printE ("ERROR: Not enough money to activate this card");
+                            
+                        } else {
+                            
+                            if (g.players[g.whoseTurn()].getCardsInPlay()[temp] != Cards.NOTACARD) {
+                                
+                                validDieNum = true;
+                                g.players[g.whoseTurn()].addMoney(-die[i].getValue());
+                                
+                            }
                             
                         }
                         

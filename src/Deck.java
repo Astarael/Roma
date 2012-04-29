@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.Collections;
+//import java.util.List;
 
 /* Deck.java
  * By Samuel Baxter and Theo Tse
@@ -20,6 +21,11 @@ public class Deck {
     public final static int NUM_LEGAT = 2;
     public final static int NUM_ARCHITECTUS = 2;
     public final static int NUM_SENATOR = 2;
+    public final static int NUM_AESCULAPINUM = 2;
+    public final static int NUM_GLADIATOR = 2;
+    public final static int NUM_MACHINA = 2;
+    public final static int NUM_CONSILIARIUS = 2;
+    public final static int NUM_TURRIS = 2;
     
     public final static int NUM_SWAP = 4;
 
@@ -114,8 +120,65 @@ public class Deck {
             j++;
             
         }
+        
+        for (i = 0; i < NUM_AESCULAPINUM; i++) {
+            
+            cards[j] = Cards.AESCULAPINUM;
+            j++;
+            
+        }
+        
+        for (i = 0; i < NUM_MACHINA; i++) {
+            
+            cards[i] = Cards.MACHINA;
+            
+        }
+        
+        for (i = 0; i < NUM_CONSILIARIUS; i++) {
+            
+            cards[i] = Cards.CONSILIARIUS;
+            
+        }
+        
+        for (i = 0; i < NUM_GLADIATOR; i++) {
+            
+            cards[j] = Cards.GLADIATOR;
+            j++;
+            
+        }
+        
+        for (i = 0; i < NUM_TURRIS; i++) {
+            
+            cards[j] = Cards.TURRIS;
+            j++;
+            
+        }
+        
+        for (i = 0; i < NUM_CARDS; i++) {
+            
+            discard[i] = Cards.NOTACARD;
+            
+        }
 
         shuffleCards();
+        
+    }
+    
+    public Cards[] getCards () {
+        
+        return cards;
+        
+    }
+    
+    public void setCards (Cards[] c) {
+        
+        cards = c;
+        
+    }
+    
+    public Cards[] getDiscard () {
+        
+        return discard;
         
     }
 
@@ -130,14 +193,14 @@ public class Deck {
         
         for (i = 0; i < Game.NUM_PLAYERS; i++) {
             
-            Interface.print ("PLAYER " + (i + 1) +  "'s Cards:\n");
+            Interface.print ("PLAYER " + (i + 1) +  "'s Cards:");
             
             // give first 4 cards from cards[] and give to player
             for (j = 0; j < NUM_START_CARDS; j++) {
                 
                 draw = drawCard();
                 g.players[i].addCard (draw);
-                Interface.print (draw + "\n");
+                Interface.print (draw.toString());
                 
             }
             
@@ -197,7 +260,7 @@ public class Deck {
     }
     
     
-    public void discardCard (Cards c) {
+    public void discardCard (Cards c, Cards[] hand) {
         
         int i;
         for (i = 0; i < NUM_CARDS; i++) {
@@ -206,6 +269,17 @@ public class Deck {
                 
                 discard[i] = c;
                 i = NUM_CARDS;
+                
+            }
+            
+        }
+        
+        for (i = 0; i < hand.length; i++) {
+            
+            if (c == hand[i]) {
+                
+                hand[i] = Cards.NOTACARD;
+                i = hand.length;
                 
             }
             

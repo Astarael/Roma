@@ -6,14 +6,13 @@
  */
 
 // need to implement cancelling an action
-// spec change - done
 // discarding
-// drawing
 // change interface to have a controller
 // change interface to deal with as much input parsing as possible
-// can activate templum (bug) - done
-// more cards (aesculapinum)
-// machina, consulilarius, gladiator, consul, haruspex, essedum, turris
+// more cards (aesculapinum, machina, consulilarius, gladiator, turris) done
+// consul, haruspex, essedum
+// cards need to be a list
+// dice are 'used' too early - no way to cancel actions w/o 'unusing' die
 
 
 /**
@@ -82,13 +81,13 @@ public class Game {
                 // select which ONE to keep
                 // discard others
                 
-                Interface.print ("You drew:\n");
+                Interface.print ("You drew:");
                 
                 Cards[] draw = new Cards[input];
                 for (i = 0; i < draw.length; i++) {
                     
                     draw[i] = deck.drawCard();
-                    Interface.print(draw[i].toString() + "\n");
+                    Interface.print(draw[i].toString());
                     
                 }
                 
@@ -112,7 +111,7 @@ public class Game {
                     
                     if (!valid) {
                         
-                        Interface.printE("Invalid Card Name\n");
+                        Interface.printE("Invalid Card Name");
                         
                     }
                     
@@ -120,7 +119,7 @@ public class Game {
                 
                 for (i = 0; i < draw.length; i++) {
                     
-                    deck.discardCard(draw[i]);
+                    deck.discardCard(draw[i], draw);
                     
                 }
                 
@@ -142,7 +141,7 @@ public class Game {
                     
                 } else {
                     
-                    Interface.printE("You cannot activate this card!\n");
+                    Interface.printE("You cannot activate this card!");
                     // 'unuse' die
                     for (i = 1; i < NUM_DICE; i++) {
 
@@ -181,13 +180,13 @@ public class Game {
         String lay = "";
         boolean correctCard = false;
         
-        Interface.print("Your hand contains:\n");
+        Interface.print("Your hand contains:");
         
         for (i = 0; i < hand.length; i++) {
 
             if (hand[i] != Cards.NOTACARD) {
                 
-                Interface.print(hand[i].toString() + "\n");
+                Interface.print(hand[i].toString());
                 
             }
         }
@@ -211,7 +210,7 @@ public class Game {
             
             if ((!correctCard) || (lay.equals("NOTACARD"))) {
             
-                Interface.print ("Invalid Card Name\n");
+                Interface.print ("Invalid Card Name");
                 correctCard = false;
             
             }
@@ -413,11 +412,11 @@ public class Game {
         
         for (i = 0; i < NUM_PLAYERS; i++) {
             
-            Interface.print("PLAYER " + (i + 1) + "'s hand:\n");
+            Interface.print("PLAYER " + (i + 1) + "'s hand:");
             
             for (j = 0; j < Deck.NUM_START_CARDS; j++) {
                 
-                Interface.print(players[i].getHand()[j] + "\n");
+                Interface.print(players[i].getHand()[j].toString());
                 
             }
             
@@ -428,7 +427,7 @@ public class Game {
                 
             }
             
-            Interface.print("Player 1:\n");
+            Interface.print("Player 1:");
             for (k = 0; k <= Game.NUM_SIDES_ON_DICE; k++) {
             
                 Interface.print("(" + k + ") ");
@@ -437,11 +436,7 @@ public class Game {
                 
                 if (temp1 != Cards.NOTACARD){
                     
-                    Interface.print("**CARD**\n");
-                    
-                } else {
-                    
-                    Interface.print("\n");
+                    Interface.print("**CARD**");
                     
                 }
                 
