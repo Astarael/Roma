@@ -79,6 +79,8 @@ public class Tests {
         test.addVictoryPoints(-4);
         assert (test.getVictoryPoints() == (Game.START_VICTORY_POINTS - 1));
         
+        // lay cards, addcard, getPosition
+        
         System.out.println ("Passed!");
         
     }
@@ -99,7 +101,7 @@ public class Tests {
         // whoseTurn();
         
         Game g = new Game();
-        g.initialiseGame();
+        //g.setUI (null);
         g.rollDie();
         assert (g.whoseTurn() == 0);
         assert (g.players.length == Game.NUM_PLAYERS);
@@ -166,17 +168,17 @@ public class Tests {
         assert (c.getType() == Card.CHARACTER);
         
         Game g = new Game();
-        g.initialiseGame();
-        c.activate(0, g.players, c, g.getDeck());
+        //g.setUI(null);
+        c.activate(0, g.players, c, g.getDeck(), 0, g.getDice());
         assert (g.players[0].getVictoryPoints() == 11);
         assert (g.players[1].getVictoryPoints() == 9);
-        c.activate(0, g.players, c, g.getDeck());
+        c.activate(0, g.players, c, g.getDeck(), 0, g.getDice());
         assert (g.players[0].getVictoryPoints() == 12);
         assert (g.players[1].getVictoryPoints() == 8);
-        c.activate(1, g.players, c, g.getDeck());
+        c.activate(1, g.players, c, g.getDeck(), 0, g.getDice());
         assert (g.players[0].getVictoryPoints() == 11);
         assert (g.players[1].getVictoryPoints() == 9);
-        c.activate(1, g.players, c, g.getDeck());
+        c.activate(1, g.players, c, g.getDeck(), 0, g.getDice());
         assert (g.players[0].getVictoryPoints() == 10);
         assert (g.players[1].getVictoryPoints() == 10);
         

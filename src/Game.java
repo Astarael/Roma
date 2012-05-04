@@ -7,10 +7,9 @@
 
 // need to implement cancelling an action
 // discarding
-// change interface to have a controller
 // change interface to deal with as much input parsing as possible
-// more cards (aesculapinum, machina, consulilarius, gladiator, turris) done
-// consul, haruspex, essedum
+// more cards (haruspex) done
+// consul, essedum
 // cards need to be a list
 // dice are 'used' too early - no way to cancel actions w/o 'unusing' die
 
@@ -32,7 +31,7 @@ public class Game {
     // interface actions
     public final static int END_TURN = 0;
     public final static int BUY_MONEY = 1;
-    public final static int BUY_CARDS = 2;
+    public final static int DRAW_CARD = 2;
     public final static int ACTIVATE_CARD = 3;
     public final static int LAY_CARD = 4;
     public final static int READ_RULES = 5;
@@ -40,30 +39,72 @@ public class Game {
     public Die die[];
     public Player players[];
 
-    // create cards
+    private static RomaUserInterface ui;
     private int turnNumber = 0;
     
     private int i = 0;
     private Deck deck;
+    private boolean valid = false;
+    private int input = 0;
     
+    
+    public static void main (String[] args) {
+        
+        ui = new textUI ();
+        Game g = new Game ();
+        ui.printWinner(g.run());
+        
+    }
+    
+    public void setUI (RomaUserInterface rUI) {
+        
+        ui = rUI;
+        
+    }
+    
+    /**
+     * Creates the players and dice.
+     */
+    public Game () {
+
+        
+        die = new Die[NUM_DICE];
+        for (i = 0; i < NUM_DICE; i++) {
+
+            die[i] = new Die();
+
+        }
+        
+        players = new Player[NUM_PLAYERS];
+
+        for (i = 0; i < NUM_PLAYERS; i++) {
+            
+            players[i] = new Player();
+            
+        }
+        
+        deck = new Deck (players, ui);
+        deck.allocateCards();
+        
+        layStartCards();
+
+    }
     
     public int run() {
         
-        initialiseGame();
         int input = 0;
-        int cardNum;
         
         subStartingVP();
+        
         while (rollDie()) { 
         }
         
         while (!endGame()) {
             
-            Interface.updateBoard(players[0].getVictoryPoints(), players[1].getVictoryPoints(), 
-                    players[0].getMoney(), players[1].getMoney(), whoseTurn(), players[0].getHand(),
-                    players[1].getHand(), die);
+            preTurn();
             
-            input = Interface.requestInput();
+            input = ui.pickAnInt(END_TURN);
+            
             if (input == END_TURN) {
                 
                 turnNumber++;
@@ -71,90 +112,19 @@ public class Game {
                 while (rollDie()) { 
                 }
                 
-            } else if (input == BUY_CARDS) {
+            } else if (input == DRAW_CARD) {
                 
-                boolean valid = false;
-                
-                input = Interface.getDieInput("BUY CARDS");
-                
-                // draw #input cards
-                // select which ONE to keep
-                // discard others
-                
-                Interface.print ("You drew:");
-                
-                Cards[] draw = new Cards[input];
-                for (i = 0; i < draw.length; i++) {
-                    
-                    draw[i] = deck.drawCard();
-                    Interface.print(draw[i].toString());
-                    
-                }
-                
-                while (!valid) {
-                    
-                    String card = Interface.getInput ("\nWhich card would you like to keep?");
-                    card = card.toUpperCase();
-                    
-                    for (i = 0; i < draw.length; i++) {
-                    
-                        if (card.equals(draw[i].toString())) {
-                            
-                            valid = true;
-                            players[whoseTurn()].addCard(draw[i]);
-                            draw[i] = Cards.NOTACARD;
-                            i = draw.length;
-                            
-                        }
-                    
-                    }
-                    
-                    if (!valid) {
-                        
-                        Interface.printE("Invalid Card Name");
-                        
-                    }
-                    
-                }
-                
-                for (i = 0; i < draw.length; i++) {
-                    
-                    deck.discardCard(draw[i], draw);
-                    
-                }
+                drawCard();
                 
             } else if (input == BUY_MONEY) {
                 
-                input = Interface.getDieInput("BUY MONEY");
+                ui.print("Enter the value (1 - " + NUM_SIDES_ON_DICE + ") of the die you wish to use to BUY MONEY");
+                input = ui.pickAnInt(1);
                 players[whoseTurn()].addMoney(input);
                 
             } else if (input == ACTIVATE_CARD) {
                 
-                input = Interface.getDieInput ("ACTIVATE A CARD");
-                cardNum = Interface.pickACard();
-                
-                Cards[] cards = players[whoseTurn()].getCardsInPlay();
-                
-                if (cards[cardNum].isActivatable(cards[cardNum])) {
-                
-                    cards[cardNum].activate(whoseTurn(), players, cards[cardNum], deck, cardNum, getDice());
-                    
-                } else {
-                    
-                    Interface.printE("You cannot activate this card!");
-                    // 'unuse' die
-                    for (i = 1; i < NUM_DICE; i++) {
-
-                        if (die[i].getValue() == cardNum + 1) {
-                            
-                            die[i].used = false;
-                            i = NUM_DICE;
-                            
-                        }
-                        
-                    }
-                    
-                }
+                activateCard();
                 
             } else if (input == LAY_CARD) {
                 
@@ -162,7 +132,7 @@ public class Game {
                 
             } else if (input == READ_RULES) {
                 
-                Interface.displayRules("Forum");
+                ui.displayRules("Forum");
                 
             }
             
@@ -174,19 +144,181 @@ public class Game {
     }
 
 
+    private void preTurn() {
+        
+        ui.displayBoard(players[0].getVictoryPoints(), players[1].getVictoryPoints(), 
+                players[0].getMoney(), players[1].getMoney(), whoseTurn(), players[0].getCardsInPlay(),
+                players[1].getCardsInPlay());
+        
+        ui.printDie(die);
+        
+        ui.print("Which action would you like to perform?");
+        ui.print(Game.END_TURN + " - End turn");
+        ui.print(Game.BUY_MONEY + " - Use a die to buy money");
+        ui.print(Game.DRAW_CARD + " - Use a die to get more cards");
+        ui.print(Game.ACTIVATE_CARD + " - Use a die to activate a card");
+        ui.print(Game.LAY_CARD + " - Lay a card");
+        ui.print(Game.READ_RULES + " - Read the rules");
+        
+    }
+
+
+    private void activateCard() {
+        
+        int cardNum = 0;
+        valid = false;
+        
+        while (!valid) {
+        
+            ui.print("Enter the value (1 - " + NUM_SIDES_ON_DICE + ") of the die you wish to use to ACTIVATE A CARD");
+            input = ui.pickAnInt(1);
+            ui.print("Enter the position (0 - " + NUM_SIDES_ON_DICE + ") of the card you wish to activate");
+            cardNum = ui.pickAnInt(0);
+            validateActivate(cardNum);
+            
+            if (!valid) {
+                
+                ui.printE("Please match the value of the die to the position of a valid card, or activate a card on Disk 0");
+                
+            }
+            
+        }
+        
+        Cards[] cards = players[whoseTurn()].getCardsInPlay();
+        
+        if (cards[cardNum].isActivatable(cards[cardNum])) {
+        
+            cards[cardNum].activate(whoseTurn(), players, cards[cardNum], deck, cardNum, getDice());
+            
+            if (cardNum == 0) {
+                
+                players[whoseTurn()].addMoney(-input);
+                
+            }
+            
+            // use die
+            for (i = 1; i < NUM_DICE; i++) {
+                
+                if (die[i].getValue() == input) {
+                    
+                    die[i].use();
+                    i = NUM_DICE;
+                    
+                }
+                
+            }
+            
+        } else {
+            
+            ui.printE("You cannot activate this card!");
+            
+        }
+    }
+
+    private void validateActivate(int cardNum) {
+        
+        valid = false;
+
+        for (i = 0; (i < Game.NUM_DICE) && (!valid); i++) {
+            
+            // checks that the position is a valid card
+            if (players[whoseTurn()].getCardsInPlay()[cardNum] != Cards.NOTACARD) {
+                
+                // check that the die value matches the position
+                if (die[i].getValue() == input) {
+                    
+                    valid = true;
+                    
+                } else if (input == 0) {
+                    
+                    // check player has at least as much money as the value of the die
+                    // subtract the value
+                    if (players[whoseTurn()].getMoney() < die[i].getValue()) {
+                        
+                        ui.printE ("ERROR: Not enough money to activate this card");
+                        
+                    } else {
+                        
+                        if (players[whoseTurn()].getCardsInPlay()[input] != Cards.NOTACARD) {
+                            
+                            valid = true;
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+
+
+    private void drawCard() {
+        
+        valid = false;
+        
+        ui.print("Enter the value (1 - " + NUM_SIDES_ON_DICE + ") of the die you wish to use to DRAW A CARD");
+        input = ui.pickAnInt(1);
+        
+        // draw #input cards
+        // select which ONE to keep
+        // discard others
+        
+        ui.print ("You drew:");
+        
+        Cards[] draw = new Cards[input];
+        for (i = 0; i < draw.length; i++) {
+            
+            draw[i] = deck.drawCard();
+            ui.print(draw[i].toString());
+            
+        }
+        
+        while (!valid) {
+            
+            ui.print("\nWhich card would you like to keep?");
+            Cards c = ui.pickACard();
+            
+            for (i = 0; i < draw.length; i++) {
+                
+                if (c == draw[i]) {
+                    
+                    players[whoseTurn()].addCard(draw[i]);
+                    draw[i] = Cards.NOTACARD;
+                    i = draw.length;
+                    valid = true;
+                    
+                }
+            
+            }
+            
+            if (!valid) {
+                
+                ui.printE("Invalid Card Name");
+                
+            }
+            
+        }
+        
+    }
+
+
     private void layCard() {
         
         Cards[] hand = players[whoseTurn()].getHand();
-        String lay = "";
+        Cards lay = Cards.NOTACARD;
         boolean correctCard = false;
         
-        Interface.print("Your hand contains:");
+        ui.print("Your hand contains:");
         
         for (i = 0; i < hand.length; i++) {
 
             if (hand[i] != Cards.NOTACARD) {
                 
-                Interface.print(hand[i].toString());
+                ui.print(hand[i].toString());
                 
             }
         }
@@ -194,12 +326,12 @@ public class Game {
         // get the name of the card
         while (!correctCard) {
             
-            lay = Interface.getInput("Type in the name of the card you wish to lay");
-            lay = lay.toUpperCase();
+            ui.print("Type in the name of the card you wish to lay");
+            lay = ui.pickACard();
             
             for (i = 0; i < hand.length; i++) {
                 
-                if (lay.equals(hand[i].toString())) {
+                if (lay == hand[i]) {
                     
                     correctCard = true;
                     i = hand.length;
@@ -210,19 +342,17 @@ public class Game {
             
             if ((!correctCard) || (lay.equals("NOTACARD"))) {
             
-                Interface.print ("Invalid Card Name");
+                ui.print ("Invalid Card Name");
                 correctCard = false;
             
             }
             
         }
         
-        Cards temp = Cards.valueOf(lay);
-        
         // check that they have enough money
-        if (players[whoseTurn()].getMoney() < temp.getMoneyCost()) {
+        if (players[whoseTurn()].getMoney() < lay.getMoneyCost()) {
             
-            Interface.printE("Not enough money to lay this card");
+            ui.printE("Not enough money to lay this card");
             return;
             
         }
@@ -232,18 +362,19 @@ public class Game {
         
         while ((position < 0) || (position > 6)) {
             
-            position = Interface.getActionInput("Where would you like to lay this card?");
+            ui.print("Where would you like to lay this card?");
+            position = ui.pickAnInt(0);
         
             if ((position < 0) || (position > 6)) {
                 
-                Interface.printE("Invalid position");
+                ui.printE("Invalid position");
                 
             }
             
         }
         
-        players[whoseTurn()].addMoney(-temp.getMoneyCost());
-        players[whoseTurn()].layCard(temp, position);
+        players[whoseTurn()].addMoney(-lay.getMoneyCost());
+        players[whoseTurn()].layCard(lay, position);
         
     }
 
@@ -264,6 +395,7 @@ public class Game {
         }
         
         players[whoseTurn()].addVictoryPoints(-counter);
+        
     }
 
 
@@ -275,7 +407,6 @@ public class Game {
         for (i = 1; i < Game.NUM_DICE; i++) {
 
             die[i].rollDie();
-            die[i].used = false;
 
         }
         
@@ -290,8 +421,10 @@ public class Game {
         }
         
         if (sameDie) {
-                        
-            if (Interface.getInput ("Do you want to re-roll?").equals("y")) {
+            
+            ui.printDie(die);
+            ui.print("Do you want to re-roll? (Type 'y' for yes)");
+            if (ui.getString().equals("y")) {
                 
                 reRoll = true;
                 
@@ -303,36 +436,6 @@ public class Game {
         
         return reRoll;
         
-    }
-
-
-    /**
-     * Creates the players and dice.
-     */
-    public void initialiseGame () {
-
-        
-        die = new Die[NUM_DICE];
-        for (i = 0; i < NUM_DICE; i++) {
-
-            die[i] = new Die();
-
-        }
-        
-        players = new Player[NUM_PLAYERS];
-
-        for (i = 0; i < NUM_PLAYERS; i++) {
-            
-            players[i] = new Player();
-            
-        }
-        
-        deck = new Deck (this);
-        // UNCOMMENT THIS LINE TO RUN THE TESTS
-        deck.allocateCards(this);
-        
-        layStartCards();
-
     }
     
     
@@ -349,8 +452,8 @@ public class Game {
             result = true;
 
         }
-
-
+        
+        
         return result;
 
     }
@@ -366,7 +469,7 @@ public class Game {
             
             winner = 1;
         
-        } else if (players[1].getVictoryPoints () > players[0].getVictoryPoints()) {
+        } else {
             
             winner = 2;
             
@@ -389,10 +492,10 @@ public class Game {
         
         for (i = 1; (i <NUM_DICE) && (valid == false); i++) {
             
-            if ((value == die[i].getValue()) && (die[i].used == false)) {
+            if ((value == die[i].getValue()) && (die[i].isUsed() == false)) {
         
                 valid = true;
-                die[i].used = true;
+                die[i].use();
         
             }
             
@@ -412,37 +515,46 @@ public class Game {
         
         for (i = 0; i < NUM_PLAYERS; i++) {
             
-            Interface.print("PLAYER " + (i + 1) + "'s hand:");
+            ui.print("PLAYER " + (i + 1) + "'s hand:");
             
             for (j = 0; j < Deck.NUM_START_CARDS; j++) {
                 
-                Interface.print(players[i].getHand()[j].toString());
+                ui.print(players[i].getHand()[j].toString());
                 
             }
             
             for (j = 0; j < Deck.NUM_START_CARDS; j++) {
 
-                position = Interface.getActionInput("Where do you want to lay your " + players[i].getHand()[j] + "?");
+                ui.print("Where do you want to lay your " + players[i].getHand()[j] + "?");
+                position = ui.pickAnInt(0);
                 players[i].layCard(players[i].getHand()[j], position);
                 
             }
             
-            Interface.print("Player 1:");
-            for (k = 0; k <= Game.NUM_SIDES_ON_DICE; k++) {
-            
-                Interface.print("(" + k + ") ");
+            if (i < NUM_PLAYERS - 1) {
                 
-                temp1 = players[0].getCardsInPlay()[k];
+                ui.print("Player " + (i + 1) + ":");
+                for (k = 0; k <= Game.NUM_SIDES_ON_DICE; k++) {
                 
-                if (temp1 != Cards.NOTACARD){
+                    ui.printRaw("(" + k + ") ");
                     
-                    Interface.print("**CARD**");
+                    temp1 = players[i].getCardsInPlay()[k];
+                    
+                    if (temp1 != Cards.NOTACARD){
+                        
+                        ui.print("**CARD**");
+                        
+                    } else {
+                        
+                        ui.print("");
+                        
+                    }
                     
                 }
                 
             }
             
-        }
+        }        
         
     }
     

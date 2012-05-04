@@ -44,7 +44,7 @@ public class Interface {
         
         for (i = 1; i < Game.NUM_DICE; i++) {
             
-            if (die[i].used == false) {
+            if (die[i].isUsed() == false) {
                 
                 System.out.print(die[i].getValue() + "\t");
                 
@@ -65,7 +65,7 @@ public class Interface {
             System.out.println("Which action would you like to perform?");
             System.out.println(Game.END_TURN + " - End turn");
             System.out.println(Game.BUY_MONEY + " - Use a die to buy money");
-            System.out.println(Game.BUY_CARDS + " - Use a die to get more cards");
+            System.out.println(Game.DRAW_CARD + " - Use a die to get more cards");
             System.out.println(Game.ACTIVATE_CARD + " - Use a die to activate a card");
             System.out.println(Game.LAY_CARD + " - Lay a card");
             System.out.println(Game.READ_RULES + " - Read the rules");
@@ -182,6 +182,87 @@ public class Interface {
         
     }
     
+    public static int getActionInput (String string) {
+        System.out.println(string);
+        return sc.nextInt();
+    }
+    
+    public static void printE (String s) {
+        
+        System.err.printf (s + "\n");
+        
+    }
+    
+    public static void print (String s) {
+        
+        System.out.printf (s + "\n");
+        
+    }
+    
+    public static int pickACard() {
+        
+        int temp = 0;
+        int i = 0;
+        boolean validDieNum = false;
+        
+        while (validDieNum == false) {
+            
+            System.out.println ("Enter the dice disk number of the card you wish to use");
+        
+            temp = sc.nextInt();
+            Die[] die = g.getDice();
+            
+            if ((temp >= 0) && (temp <= 6)) {
+                
+                for (i = 0; (i < Game.NUM_DICE) && (!validDieNum); i++) {
+                    
+                    if (die[i].getValue() == temp) {
+                        
+                        if (g.players[g.whoseTurn()].getCardsInPlay()[temp] != Cards.NOTACARD) {
+                            
+                            validDieNum = true;
+                            
+                        }
+                        
+                    }
+                    
+                    else if (temp == 0) {
+                        
+                        // check player has at least as much money as the value of the die
+                        // subtract the value
+                        if (g.players[g.whoseTurn()].getMoney() < die[i].getValue()) {
+                            
+                            printE ("ERROR: Not enough money to activate this card");
+                            
+                        } else {
+                            
+                            if (g.players[g.whoseTurn()].getCardsInPlay()[temp] != Cards.NOTACARD) {
+                                
+                                validDieNum = true;
+                                g.players[g.whoseTurn()].addMoney(-die[i].getValue());
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            if (!validDieNum) {
+                    
+                System.err.println ("Invalid Disk Number");
+                
+            }
+                
+        }
+        
+        
+        return temp;
+        
+    }
     
     // calling function will ask for another filename
     public static void displayRules (String name) {
@@ -273,88 +354,6 @@ public class Interface {
 
         return list;
 
-    }
-    
-    public static int getActionInput (String string) {
-        System.out.println(string);
-        return sc.nextInt();
-    }
-    
-    public static void printE (String s) {
-        
-        System.err.printf (s + "\n");
-        
-    }
-    
-    public static void print (String s) {
-        
-        System.out.printf (s + "\n");
-        
-    }
-    
-    public static int pickACard() {
-        
-        int temp = 0;
-        int i = 0;
-        boolean validDieNum = false;
-        
-        while (validDieNum == false) {
-            
-            System.out.println ("Enter the dice disk number of the card you wish to use");
-        
-            temp = sc.nextInt();
-            Die[] die = g.getDice();
-            
-            if ((temp >= 0) && (temp <= 6)) {
-                
-                for (i = 0; (i < Game.NUM_DICE) && (!validDieNum); i++) {
-                    
-                    if (die[i].getValue() == temp) {
-                        
-                        if (g.players[g.whoseTurn()].getCardsInPlay()[temp] != Cards.NOTACARD) {
-                            
-                            validDieNum = true;
-                            
-                        }
-                        
-                    }
-                    
-                    else if (temp == 0) {
-                        
-                        // check player has at least as much money as the value of the die
-                        // subtract the value
-                        if (g.players[g.whoseTurn()].getMoney() < die[i].getValue()) {
-                            
-                            printE ("ERROR: Not enough money to activate this card");
-                            
-                        } else {
-                            
-                            if (g.players[g.whoseTurn()].getCardsInPlay()[temp] != Cards.NOTACARD) {
-                                
-                                validDieNum = true;
-                                g.players[g.whoseTurn()].addMoney(-die[i].getValue());
-                                
-                            }
-                            
-                        }
-                        
-                    }
-                    
-                }
-                
-            }
-            
-            if (!validDieNum) {
-                    
-                System.err.println ("Invalid Disk Number");
-                
-            }
-                
-        }
-        
-        
-        return temp;
-        
     }
 
 }

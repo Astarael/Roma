@@ -12,6 +12,7 @@ public enum Cards {
     CONSILIARIUS (1, 4, 4),
     FORUM (0, 5, 5),
     GLADIATOR (1, 6, 5),
+    HARUSPEX (0, 4, 3),
     LEGAT (1, 5, 2),
     MACHINA (0, 4, 4),
     MERCATOR (1, 7, 2),
@@ -49,363 +50,193 @@ public enum Cards {
         players = p;
         deck = d;
         
-        int i;
-        
         if (c == MERCATOR) {
             
-            int money = players[whoseTurn].getMoney();
-            int victoryPoints = players[(whoseTurn + 1) % 2].getVictoryPoints();
-            int value= -1;
-            
-            if (money > 0 && victoryPoints > 0) {
-                money = money / 2;
-                while (value < 0) {
-                
-                    value = Interface.getActionInput("Please enter the number of victory points you want to buy");
-                    if (value <= money) {
-                        
-                        players[whoseTurn].addVictoryPoints(value);
-                        players[whoseTurn].addMoney(-money * 2);
-                    
-                        players[(whoseTurn + 1) % 2].addVictoryPoints(-value);
-                        players[(whoseTurn + 1) % 2].addMoney(money * 2);
-                        
-                    } else  {
-                        
-                        value = -1;
-                        Interface.printE ("Invalid Input");
-                    }
-                    
-                }
-            }
+            activateMercator();
             
         } else if (c == TRIBUNUSPLEBIS) { 
             
-            players[whoseTurn].addVictoryPoints(1);
-            players[(whoseTurn + 1) % 2].addVictoryPoints(-1);
+            activateTribunusPlebis();
             
         } else if (c == FORUM) {
             
-            int basilica = 0;
-            boolean templum = false;
-            
-            players[whoseTurn].addVictoryPoints(Interface.getDieInput("Activate Forum and get the victory points"));
-            
-            if (position == 6) {
-                
-                if (players[whoseTurn].getCardsInPlay()[position - 1] == BASILICA) {
-                    
-                    basilica++;
-                    
-                }
-                
-                if (players[whoseTurn].getCardsInPlay()[position - 1] == TEMPLUM) {
-                    
-                    templum = true;
-                    
-                }
-                
-            } else if (position == 0) {
-                
-                if (players[whoseTurn].getCardsInPlay()[position + 1] == BASILICA) {
-                    
-                    basilica++;
-                    
-                }
-                
-                if (players[whoseTurn].getCardsInPlay()[position + 1] == TEMPLUM) {
-                    
-                    templum = true;
-                    
-                }
-                
-            } else {
-                
-                if (players[whoseTurn].getCardsInPlay()[position - 1] == BASILICA) {
-                    
-                    basilica++;
-                    
-                }
-                
-                if (players[whoseTurn].getCardsInPlay()[position + 1] == BASILICA) {
-                    
-                    basilica++;
-                    
-                }
-                
-                if ((players[whoseTurn].getCardsInPlay()[position - 1] == TEMPLUM) ||
-                        (players[whoseTurn].getCardsInPlay()[position + 1] == TEMPLUM)) {
-                    
-                    templum = true;
-                    
-                }
-                
-            }
-                
-            players[whoseTurn].addVictoryPoints(2 * basilica);
-            
-            if (templum) {
-                
-                if (Interface.getInput("Do you wish to use the Templum?").equals("yes")) {
-                    
-                    int value = -1;
-                        
-                        for (i = 0; i < dice.length; i++) {
-                            
-                            if (dice[i].used == false) {
-                                
-                                value = dice[i].getValue();
-                                dice[i].used = true;
-                                
-                            }
-                            
-                        }
-                
-                    if (value != -1) {
-                        
-                        players[whoseTurn].addVictoryPoints(value);
-                        
-                    } else {
-                        
-                        Interface.printE("All dice are already used");
-                        
-                    }
-                    
-                }
-                
-            }
-            
+            activateForum(position, dice);
             
         } else if (c == SICARIUS) {
             
-            int place = 0;
-            
-            while (place == 0) {
-                
-                place = Interface.getActionInput("Enter the positon of the character card you wish to eliminate");
-                
-                if (players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[place].getType() != CHARACTER) {
-                    
-                    place = 0;
-                    Interface.printE("ERROR: Invalid Character Card");
-                    
-                }
-                
-            }
-            
-            
-            deck.discardCard(c, players[whoseTurn].getCardsInPlay());
-            
-            c = players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[place];
-            deck.discardCard(c, players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay());
+            activateSicarius(c);
             
         } else if (c == LEGAT) {
             
-            int counter = 0;
-            
-            // subtract 1 VP for each unoccupied dice disk
-            for (i = 1; i <= Game.NUM_SIDES_ON_DICE; i++) {
-                
-                if (players[whoseTurn + 1 % Game.NUM_PLAYERS].getCardsInPlay()[i] == Cards.NOTACARD) {
-                    
-                    counter++;
-                    
-                }
-                
-            }
-            
-            players[whoseTurn].addVictoryPoints(counter);
+            activateLegat();
             
         } else if (c == NERO) {
             
-            int place = -1;
-            
-            while (place == -1) {
-                
-                place = Interface.getActionInput("Enter the positon of the building card you wish to eliminate");
-                
-                if (players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[place].getType() != BUILDING) {
-                    
-                    place = -1;
-                    Interface.printE("ERROR: Invalid Character Card");
-                    
-                }
-                
-            }
-            
-            // remove the nero from the players cards
-            deck.discardCard(c, players[whoseTurn].getCardsInPlay());
-            
-            // remove the card the nero destroyed
-            c = players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[place];
-            deck.discardCard(c, players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay());
+            activateNero(c);
             
         } else if (c == MERCATUS) {
             
-            int counter = 0;
-            
-            for (i = 0; i <= Game.NUM_SIDES_ON_DICE; i++) {
-                
-                if (players[whoseTurn + 1 % Game.NUM_PLAYERS].getCardsInPlay()[i] == FORUM) {
-                    
-                    counter++;
-                    
-                }
-                
-            }
-            
-            players[whoseTurn].addVictoryPoints(counter);
-            
+            activateMercatus();
             
         } else if (c == ARCHITECTUS) {
             
-            // print out their hand
-            // check card is a building card
-            // select which cards to lay
-            // lay card
-            // refund cost
-            
-            boolean finished = false;
-            Cards[] hand = players[whoseTurn].getHand();
-            Interface.print("Your Hand:");
-            String card = "";
-            position = 0;
-            
-            for (i = 0; i < hand.length; i++) {
-                
-                if (hand[i].getType() == BUILDING) {
-                
-                    Interface.print(hand[i].toString());
-                
-                }
-                
-            }
-            
-            while (!finished) {
-                
-                card = Interface.getInput("Which card would you like to lay?");
-                card = card.toUpperCase();
-                
-                while ((position < 0) || (position > 6)) {
-                    
-                    position = Interface.getActionInput("Where would you like to place this card?");
-                    
-                    if ((position < 0) || (position > 6)) {
-                        
-                        Interface.printE("Invalid Position");
-                        
-                    }
-                        
-                }
-                
-                players[whoseTurn].layCard(valueOf(card), position);
-                
-                players[whoseTurn].addMoney(valueOf(card).getMoneyCost());
-   
-            }
+            activateArchitectus();
             
         } else if (c == SENATOR) {
             
-            // print out their hand
-            // check card is a character card
-            // select which cards to lay
-            // lay card
-            // refund cost
-            
-            boolean finished = false;
-            Cards[] hand = players[whoseTurn].getHand();
-            Interface.print("Your Hand:");
-            String card = "";
-            position = 0;
-            
-            for (i = 0; i < hand.length; i++) {
-                
-                if (hand[i].getType() == CHARACTER) {
-                
-                    Interface.print(hand[i].toString());
-                
-                }
-                
-            }
-            
-            while (!finished) {
-                
-                card = Interface.getInput("Which card would you like to lay?");
-                card = card.toUpperCase();
-                
-                while ((position < 0) || (position > 6)) {
-                    
-                    position = Interface.getActionInput("Where would you like to place this card?");
-                    
-                    if ((position < 0) || (position > 6)) {
-                        
-                        Interface.printE("Invalid Position");
-                        
-                    }
-                        
-                }
-                
-                players[whoseTurn].layCard(valueOf(card), position);
-                
-                players[whoseTurn].addMoney(valueOf(card).getMoneyCost());
-   
-            }
+            activateSenator();
             
         } else if (c == AESCULAPINUM) {
             
-            // show the chars from discard pile
-            // player selects which card
-            // add that card to players hand
-            Cards[] discard = deck.getDiscard();
-            Boolean noCharCards = true;
+            actiavteAesculapinum();
             
-            for (i = 0; i < Deck.NUM_CARDS; i++) {
+        } else if (c == MACHINA) {
+            
+            activateMachina();
+            
+        } else if (c == CONSILIARIUS) {
+            
+            activateConsiliarius();
+            
+        } else if (c == GLADIATOR) {
+            
+            activateGladiator();
+            
+        } else if (c == HARUSPEX) {
+            
+            activateHaruspex();
+            
+        }
+        
+    }
+
+    private void activateHaruspex() {
+        
+        int i;
+        // show the deck
+        // player picks a card
+        // shuffle the deck
+        Boolean valid = false;
+        
+        Interface.print("Pick a card:");
+        for (i = 0; i < deck.getCards().length; i++) {
+            
+            if (deck.getCards()[i] != NOTACARD) {
                 
-                if (discard[i].getType() == CHARACTER) {
+                Interface.print(deck.getCards()[i].toString());
+                
+            }
+            
+        }
+        
+        while (!valid) {
+            
+            String card = Interface.getInput("");
+            card = card.toUpperCase();
+            for (i = 0; i < deck.getCards().length; i++) {
+                
+                if (card.equals(deck.getCards()[i].toString())) {
                     
-                    noCharCards = false;
-                    Interface.print(discard[i].toString() + "\t");
+                    valid = true;
+                    players[whoseTurn].addCard(deck.getCards()[i]);
+                    deck.discardCard(deck.getCards()[i], deck.getCards());
+                    i = deck.getCards().length;
+                    deck.shuffleCards();
                     
-                    if (i % 3 == 0) {
-                        
-                        Interface.print("");
-                        
+                }
+                
+            }
+            
+            if (!valid) {
+                
+                Interface.printE("Invalid Card, Please choose another");
+                
+            }
+            
+        }
+        
+    }
+
+    private void activateGladiator() {
+        
+        int i;
+        // player picks a char card and returns it to opponents hand
+        Boolean valid = false;
+        
+        while (!valid) {
+            
+            String card = Interface.getInput ("Which card would you like to return?");
+            
+            for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
+                
+                if (card.equals(players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[i])) {
+                    
+                    if (players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[i].getType() == CHARACTER) {
+                    
+                        valid = true;
+                        players[(whoseTurn + 1) % Game.NUM_PLAYERS].addCard(players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[i]);
+                        players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[i] = NOTACARD;
+                    
                     }
                     
                 }
                 
             }
             
-            if (noCharCards) {
+            if (!valid) {
                 
-                Interface.printE("The Discard Pile contains no Character Cards");
+                Interface.printE("ERROR: Invalid Card");
                 
+            }
+            
+        }
+        
+    }
+
+    private void activateConsiliarius() {
+        
+        int i;
+        // remove character cards from cardsInPlay
+        // re-place character cards
+        
+        Boolean hasCharacters = false;
+        Boolean valid = false;
+        Cards[] temp = new Cards[Game.NUM_SIDES_ON_DICE];
+        int j = 0;
+        
+        for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
+            
+            if (players[whoseTurn].getCardsInPlay()[i].getType() == CHARACTER) {
                 
-            } else {
+                Interface.print(players[whoseTurn].getCardsInPlay()[i].toString());
+                temp[j] = players[whoseTurn].getCardsInPlay()[i];
+                j++;
                 
-                Boolean valid = false;
+                players[whoseTurn].getCardsInPlay()[i] = NOTACARD;
+                hasCharacters = true;
+                
+            }
+            
+        }
+        
+        if (hasCharacters) {
+            
+            for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
                 
                 while (!valid) {
             
-                    String card = Interface.getInput("Which card would you like to draw?");
-                    card = card.toUpperCase();
-                
-                    for (i = 0; i < Deck.NUM_CARDS; i++) {
+                    j = Interface.getActionInput("Where would you like to place your " + temp[i]);
                     
-                        if ((discard[i].getType() == CHARACTER) && (card.equals(discard[i].toString()))) {
+                    if ((j >= 0) || (j <= Game.NUM_SIDES_ON_DICE)) {
                         
-                            players[whoseTurn].addCard(discard[i]);
-                            deck.discardCard(discard[i], discard);
-                            i = Deck.NUM_CARDS;
-                            valid = true;
-                            
-                        }
+                        valid = true;
+                        players[whoseTurn].layCard(temp[i], j);
                         
                     }
                     
                     if (!valid) {
                         
-                        Interface.printE("ERROR: Invalid Card Name");
+                        Interface.printE ("ERROR: Invalid position");
                         
                     }
                     
@@ -413,129 +244,112 @@ public enum Cards {
                 
             }
             
-        } else if (c == MACHINA) {
+        }
+        
+    }
+
+    private void activateMachina() {
+        
+        int i;
+        // remove building cards from cardsInPlay
+        // re-place building cards
+        Boolean hasBuildings = false;
+        Boolean valid = false;
+        Cards[] temp = new Cards[Game.NUM_SIDES_ON_DICE];
+        int j = 0;
+        
+        for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
             
-            // remove building cards from cardsInPlay
-            // re-place building cards
-            Boolean hasBuildings = false;
-            Boolean valid = false;
-            Cards[] temp = new Cards[Game.NUM_SIDES_ON_DICE];
-            int j = 0;
+            if (players[whoseTurn].getCardsInPlay()[i].getType() == BUILDING) {
+                
+                Interface.print(players[whoseTurn].getCardsInPlay()[i].toString());
+                temp[j] = players[whoseTurn].getCardsInPlay()[i];
+                j++;
+                
+                players[whoseTurn].getCardsInPlay()[i] = NOTACARD;
+                hasBuildings = true;
+                
+            }
+            
+        }
+        
+        if (hasBuildings) {
             
             for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
                 
-                if (players[whoseTurn].getCardsInPlay()[i].getType() == BUILDING) {
-                    
-                    Interface.print(players[whoseTurn].getCardsInPlay()[i].toString());
-                    temp[j] = players[whoseTurn].getCardsInPlay()[i];
-                    j++;
-                    
-                    players[whoseTurn].getCardsInPlay()[i] = NOTACARD;
-                    hasBuildings = true;
-                    
-                }
-                
-            }
+                while (!valid) {
             
-            if (hasBuildings) {
-                
-                for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
+                    j = Interface.getActionInput("Where would you like to place your " + temp[i]);
                     
-                    while (!valid) {
-                
-                        j = Interface.getActionInput("Where would you like to place your " + temp[i]);
+                    if ((j >= 0) || (j <= Game.NUM_SIDES_ON_DICE)) {
                         
-                        if ((j >= 0) || (j <= Game.NUM_SIDES_ON_DICE)) {
-                            
-                            valid = true;
-                            players[whoseTurn].layCard(temp[i], j);
-                            
-                        }
-                        
-                        if (!valid) {
-                            
-                            Interface.printE ("ERROR: Invalid position");
-                            
-                        }
+                        valid = true;
+                        players[whoseTurn].layCard(temp[i], j);
                         
                     }
-                
-                }
-                
-            }
-            
-        } else if (c == CONSILIARIUS) {
-            
-            // remove character cards from cardsInPlay
-            // re-place character cards
-            
-            Boolean hasCharacters = false;
-            Boolean valid = false;
-            Cards[] temp = new Cards[Game.NUM_SIDES_ON_DICE];
-            int j = 0;
-            
-            for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
-                
-                if (players[whoseTurn].getCardsInPlay()[i].getType() == CHARACTER) {
                     
-                    Interface.print(players[whoseTurn].getCardsInPlay()[i].toString());
-                    temp[j] = players[whoseTurn].getCardsInPlay()[i];
-                    j++;
-                    
-                    players[whoseTurn].getCardsInPlay()[i] = NOTACARD;
-                    hasCharacters = true;
-                    
-                }
-                
-            }
-            
-            if (hasCharacters) {
-                
-                for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
-                    
-                    while (!valid) {
-                
-                        j = Interface.getActionInput("Where would you like to place your " + temp[i]);
+                    if (!valid) {
                         
-                        if ((j >= 0) || (j <= Game.NUM_SIDES_ON_DICE)) {
-                            
-                            valid = true;
-                            players[whoseTurn].layCard(temp[i], j);
-                            
-                        }
-                        
-                        if (!valid) {
-                            
-                            Interface.printE ("ERROR: Invalid position");
-                            
-                        }
+                        Interface.printE ("ERROR: Invalid position");
                         
                     }
                     
                 }
+            
+            }
+            
+        }
+        
+    }
+
+    private void actiavteAesculapinum() {
+        
+        int i;
+        // show the chars from discard pile
+        // player selects which card
+        // add that card to players hand
+        Cards[] discard = deck.getDiscard();
+        Boolean noCharCards = true;
+        
+        for (i = 0; i < Deck.NUM_CARDS; i++) {
+            
+            if (discard[i].getType() == CHARACTER) {
+                
+                noCharCards = false;
+                Interface.print(discard[i].toString() + "\t");
+                
+                if (i % 3 == 0) {
+                    
+                    Interface.print("");
+                    
+                }
                 
             }
             
-        } else if (c == GLADIATOR) {
+        }
+        
+        if (noCharCards) {
             
-            // player picks a char card and returns it to opponents hand
+            Interface.printE("The Discard Pile contains no Character Cards");
+            
+            
+        } else {
+            
             Boolean valid = false;
             
             while (!valid) {
+        
+                String card = Interface.getInput("Which card would you like to draw?");
+                card = card.toUpperCase();
+            
+                for (i = 0; i < Deck.NUM_CARDS; i++) {
                 
-                String card = Interface.getInput ("Which card would you like to return?");
-                
-                for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
+                    if ((discard[i].getType() == CHARACTER) && (card.equals(discard[i].toString()))) {
                     
-                    if (card.equals(players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[i])) {
-                        
-                        if (players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[i].getType() == CHARACTER) {
-                        
-                            valid = true;
-                            players[(whoseTurn + 1) % Game.NUM_PLAYERS].addCard(players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[i]);
-                            players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[i] = NOTACARD;
-                        
-                        }
+                        players[whoseTurn].addCard(discard[i]);
+                        deck.discardCard(discard[i], discard);
+                        i = Deck.NUM_CARDS;
+                        valid = true;
                         
                     }
                     
@@ -543,12 +357,335 @@ public enum Cards {
                 
                 if (!valid) {
                     
-                    Interface.printE("ERROR: Invalid Card");
+                    Interface.printE("ERROR: Invalid Card Name");
                     
                 }
                 
             }
             
+        }
+        
+    }
+
+    private void activateSenator() {
+        
+        int position;
+        int i;
+        // print out their hand
+        // check card is a character card
+        // select which cards to lay
+        // lay card
+        // refund cost
+        
+        boolean finished = false;
+        Cards[] hand = players[whoseTurn].getHand();
+        Interface.print("Your Hand:");
+        String card = "";
+        position = 0;
+        
+        for (i = 0; i < hand.length; i++) {
+            
+            if (hand[i].getType() == CHARACTER) {
+            
+                Interface.print(hand[i].toString());
+            
+            }
+            
+        }
+        
+        while (!finished) {
+            
+            card = Interface.getInput("Which card would you like to lay?");
+            card = card.toUpperCase();
+            
+            while ((position < 0) || (position > 6)) {
+                
+                position = Interface.getActionInput("Where would you like to place this card?");
+                
+                if ((position < 0) || (position > 6)) {
+                    
+                    Interface.printE("Invalid Position");
+                    
+                }
+                    
+            }
+            
+            players[whoseTurn].layCard(valueOf(card), position);
+            
+            players[whoseTurn].addMoney(valueOf(card).getMoneyCost());
+   
+        }
+        
+    }
+
+    private void activateArchitectus() {
+        
+        int position;
+        int i;
+        // print out their hand
+        // check card is a building card
+        // select which cards to lay
+        // lay card
+        // refund cost
+        
+        boolean finished = false;
+        Cards[] hand = players[whoseTurn].getHand();
+        Interface.print("Your Hand:");
+        String card = "";
+        position = 0;
+        
+        for (i = 0; i < hand.length; i++) {
+            
+            if (hand[i].getType() == BUILDING) {
+            
+                Interface.print(hand[i].toString());
+            
+            }
+            
+        }
+        
+        while (!finished) {
+            
+            card = Interface.getInput("Which card would you like to lay?");
+            card = card.toUpperCase();
+            
+            while ((position < 0) || (position > 6)) {
+                
+                position = Interface.getActionInput("Where would you like to place this card?");
+                
+                if ((position < 0) || (position > 6)) {
+                    
+                    Interface.printE("Invalid Position");
+                    
+                }
+                    
+            }
+            
+            players[whoseTurn].layCard(valueOf(card), position);
+            
+            players[whoseTurn].addMoney(valueOf(card).getMoneyCost());
+   
+        }
+        
+    }
+
+    private void activateMercatus() {
+        
+        int i;
+        int counter = 0;
+        
+        for (i = 0; i <= Game.NUM_SIDES_ON_DICE; i++) {
+            
+            if (players[whoseTurn + 1 % Game.NUM_PLAYERS].getCardsInPlay()[i] == FORUM) {
+                
+                counter++;
+                
+            }
+            
+        }
+        
+        players[whoseTurn].addVictoryPoints(counter);
+        
+    }
+
+    private void activateNero(Cards c) {
+        
+        int place = -1;
+        
+        while (place == -1) {
+            
+            place = Interface.getActionInput("Enter the positon of the building card you wish to eliminate");
+            
+            if (players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[place].getType() != BUILDING) {
+                
+                place = -1;
+                Interface.printE("ERROR: Invalid Character Card");
+                
+            }
+            
+        }
+        
+        // remove the nero from the players cards
+        deck.discardCard(c, players[whoseTurn].getCardsInPlay());
+        
+        // remove the card the nero destroyed
+        c = players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[place];
+        deck.discardCard(c, players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay());
+        
+    }
+
+    private void activateLegat() {
+        
+        int i;
+        int counter = 0;
+        
+        // subtract 1 VP for each unoccupied dice disk
+        for (i = 1; i <= Game.NUM_SIDES_ON_DICE; i++) {
+            
+            if (players[whoseTurn + 1 % Game.NUM_PLAYERS].getCardsInPlay()[i] == Cards.NOTACARD) {
+                
+                counter++;
+                
+            }
+            
+        }
+        
+        players[whoseTurn].addVictoryPoints(counter);
+        
+    }
+
+    private void activateSicarius(Cards c) {
+        
+        int place = 0;
+        
+        while (place == 0) {
+            
+            place = Interface.getActionInput("Enter the positon of the character card you wish to eliminate");
+            
+            if (players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[place].getType() != CHARACTER) {
+                
+                place = 0;
+                Interface.printE("ERROR: Invalid Character Card");
+                
+            }
+            
+        }
+        
+        
+        deck.discardCard(c, players[whoseTurn].getCardsInPlay());
+        
+        c = players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[place];
+        deck.discardCard(c, players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay());
+        
+    }
+
+    private void activateForum(int position, Die[] dice) {
+        
+        int i;
+        int basilica = 0;
+        boolean templum = false;
+        
+        players[whoseTurn].addVictoryPoints(Interface.getDieInput("Activate Forum and get the victory points"));
+        
+        if (position == 6) {
+            
+            if (players[whoseTurn].getCardsInPlay()[position - 1] == BASILICA) {
+                
+                basilica++;
+                
+            }
+            
+            if (players[whoseTurn].getCardsInPlay()[position - 1] == TEMPLUM) {
+                
+                templum = true;
+                
+            }
+            
+        } else if (position == 0) {
+            
+            if (players[whoseTurn].getCardsInPlay()[position + 1] == BASILICA) {
+                
+                basilica++;
+                
+            }
+            
+            if (players[whoseTurn].getCardsInPlay()[position + 1] == TEMPLUM) {
+                
+                templum = true;
+                
+            }
+            
+        } else {
+            
+            if (players[whoseTurn].getCardsInPlay()[position - 1] == BASILICA) {
+                
+                basilica++;
+                
+            }
+            
+            if (players[whoseTurn].getCardsInPlay()[position + 1] == BASILICA) {
+                
+                basilica++;
+                
+            }
+            
+            if ((players[whoseTurn].getCardsInPlay()[position - 1] == TEMPLUM) ||
+                    (players[whoseTurn].getCardsInPlay()[position + 1] == TEMPLUM)) {
+                
+                templum = true;
+                
+            }
+            
+        }
+            
+        players[whoseTurn].addVictoryPoints(2 * basilica);
+        
+        if (templum) {
+            
+            if (Interface.getInput("Do you wish to use the Templum?").equals("yes")) {
+                
+                int value = -1;
+                    
+                    for (i = 0; i < dice.length; i++) {
+                        
+                        if (dice[i].isUsed() == false) {
+                            
+                            value = dice[i].getValue();
+                            dice[i].use();
+                            
+                        }
+                        
+                    }
+            
+                if (value != -1) {
+                    
+                    players[whoseTurn].addVictoryPoints(value);
+                    
+                } else {
+                    
+                    Interface.printE("All dice are already used");
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+
+    private void activateTribunusPlebis() {
+        
+        players[whoseTurn].addVictoryPoints(1);
+        players[(whoseTurn + 1) % 2].addVictoryPoints(-1);
+        
+    }
+
+    private void activateMercator() {
+        
+        int money = players[whoseTurn].getMoney();
+        int victoryPoints = players[(whoseTurn + 1) % 2].getVictoryPoints();
+        int value= -1;
+        
+        if (money > 0 && victoryPoints > 0) {
+            money = money / 2;
+            while (value < 0) {
+            
+                value = Interface.getActionInput("Please enter the number of victory points you want to buy");
+                if (value <= money) {
+                    
+                    players[whoseTurn].addVictoryPoints(value);
+                    players[whoseTurn].addMoney(-money * 2);
+                
+                    players[(whoseTurn + 1) % 2].addVictoryPoints(-value);
+                    players[(whoseTurn + 1) % 2].addMoney(money * 2);
+                    
+                } else  {
+                    
+                    value = -1;
+                    Interface.printE ("Invalid Input");
+                }
+                
+            }
         }
         
     }
@@ -598,6 +735,31 @@ public enum Cards {
         
         
         return result;
+        
+    }
+    
+    public static boolean isCard (String s) {
+        
+        boolean valid = false;
+            
+        for (Cards c : Cards.values()) {
+                
+            // compare c to the uppercase version of s
+            try { 
+                
+                if (c == valueOf(s)) {
+                    
+                    valid = true;
+                    
+                }
+                  
+            } catch (IllegalArgumentException e) {
+                
+            }
+        }
+
+        
+        return valid;
         
     }
 

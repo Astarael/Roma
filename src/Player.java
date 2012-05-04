@@ -82,13 +82,12 @@ public class Player {
         
     }
     
+    /**
+     * Add or subtract an integer value of money.
+     */
     public void addMoney (int value) {
         
         this.money += value;
-        
-        /**
-         * Add or subtract an integer value of money.
-         */
         
     }
     

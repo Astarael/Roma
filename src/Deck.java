@@ -26,6 +26,7 @@ public class Deck {
     public final static int NUM_MACHINA = 2;
     public final static int NUM_CONSILIARIUS = 2;
     public final static int NUM_TURRIS = 2;
+    public final static int NUM_HARUSPEX = 2;
     
     public final static int NUM_SWAP = 4;
 
@@ -35,11 +36,17 @@ public class Deck {
     private Cards[] cards;
     private Cards[] discard;
     
+    private RomaUserInterface ui;
+    private Player[] players;
     
-    public Deck (Game g) {
+    
+    public Deck (Player[] players, RomaUserInterface rui) {
         
         int i = 0;
         int j = 0;
+        
+        ui = rui;
+        this.players = players;
         
         cards = new Cards[NUM_CARDS];
         discard = new Cards[NUM_CARDS];
@@ -154,6 +161,19 @@ public class Deck {
             
         }
         
+        for (i = 0; i < NUM_HARUSPEX; i++) {
+            
+            cards[j] = Cards.HARUSPEX;
+            j++;
+            
+        }
+        
+        for (; j < NUM_CARDS; j++) {
+            
+            cards[j] = Cards.NOTACARD;
+            
+        }
+        
         for (i = 0; i < NUM_CARDS; i++) {
             
             discard[i] = Cards.NOTACARD;
@@ -183,7 +203,7 @@ public class Deck {
     }
 
     
-    public void allocateCards (Game g) {
+    public void allocateCards () {
         
         int i;
         int j;
@@ -193,50 +213,50 @@ public class Deck {
         
         for (i = 0; i < Game.NUM_PLAYERS; i++) {
             
-            Interface.print ("PLAYER " + (i + 1) +  "'s Cards:");
+            ui.print ("PLAYER " + (i + 1) +  "'s Cards:");
             
             // give first 4 cards from cards[] and give to player
             for (j = 0; j < NUM_START_CARDS; j++) {
                 
                 draw = drawCard();
-                g.players[i].addCard (draw);
-                Interface.print (draw.toString());
+                players[i].addCard (draw);
+                ui.print (draw.toString());
                 
             }
             
             for (k = (NUM_SWAP - 1) - (i * 2); k >= (NUM_SWAP - 2) - (i * 2); k--) {
                 
-                swap[k] = getSwapCard (i + 1, g.players[i].getHand());
+                swap[k] = getSwapCard (i + 1, players[i].getHand());
                 
             }
             
         }
         
-        swapCards (swap, g.players[0].getHand(), g.players[1].getHand());
+        swapCards (swap, players[0].getHand(), players[1].getHand());
         
     }
     
     
     public Cards drawCard () {
         
-        Cards temp = null;
+        Cards temp = Cards.NOTACARD;
         int j = 0;
         
-        while (temp == null) {
+        while (temp == Cards.NOTACARD) {
         
             for (j = 0; j < NUM_CARDS; j++) {
             
-                if (cards[j] != null) {
+                if (cards[j] != Cards.NOTACARD) {
                 
                     temp = cards[j];
-                    cards[j] = null;
+                    discardCard(cards[j], cards);
                     j = NUM_CARDS;
                     
                 }
                 
             }
             
-            if (temp == null) {
+            if (temp == Cards.NOTACARD) {
                 
                 // swap discard pile and cards pile
                 // shuffle old discard pile
@@ -291,16 +311,18 @@ public class Deck {
         
         Cards result = Cards.NOTACARD;
         int i;
+        Cards swap;
         
         while (result == Cards.NOTACARD) {
         
-            String swap = Interface.getInput("Pick the card you want to swap (PLAYER " + 
+            ui.print("Pick the card you want to swap (PLAYER " + 
                     whoseTurn + "). (type in the full name)");
+            swap = ui.pickACard();
         
             // check that entered card is in player's hand
             for (i = 0; i < NUM_START_CARDS; i++) {
                 
-                if (swap.equalsIgnoreCase(hand[i].toString())) {
+                if (swap == hand[i]) {
                 
                     result = hand[i];
                     i = NUM_START_CARDS;
@@ -311,7 +333,7 @@ public class Deck {
             
             if (result == Cards.NOTACARD) {
                 
-                Interface.printE ("ERROR: Invalid Card name");
+                ui.printE ("ERROR: Invalid Card name");
                 
             }
             
