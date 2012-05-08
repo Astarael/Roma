@@ -5,13 +5,14 @@
  * 18/03/2012
  */
 
+// git push roma master
+
 // need to implement cancelling an action
-// discarding
-// change interface to deal with as much input parsing as possible
+// change interface to deal with as much input parsing as possible - done
 // more cards (haruspex) done
 // consul, essedum
 // cards need to be a list
-// dice are 'used' too early - no way to cancel actions w/o 'unusing' die
+// no way to cancel actions
 
 
 /**
@@ -59,6 +60,7 @@ public class Game {
     public void setUI (RomaUserInterface rUI) {
         
         ui = rUI;
+        Cards.setUI (ui);
         
     }
     
@@ -122,6 +124,17 @@ public class Game {
                 input = ui.pickAnInt(1);
                 players[whoseTurn()].addMoney(input);
                 
+                for (i = 1; i < NUM_DICE; i++) {
+                    
+                    if (die[i].getValue() == input) {
+                        
+                        die[i].use();
+                        i = NUM_DICE;
+                        
+                    }
+                    
+                }
+                
             } else if (input == ACTIVATE_CARD) {
                 
                 activateCard();
@@ -170,17 +183,32 @@ public class Game {
         
         while (!valid) {
         
-            ui.print("Enter the value (1 - " + NUM_SIDES_ON_DICE + ") of the die you wish to use to ACTIVATE A CARD");
-            input = ui.pickAnInt(1);
-            ui.print("Enter the position (0 - " + NUM_SIDES_ON_DICE + ") of the card you wish to activate");
-            cardNum = ui.pickAnInt(0);
-            validateActivate(cardNum);
-            
-            if (!valid) {
+            boolean usedDie = true;
+            while (usedDie) {
                 
-                ui.printE("Please match the value of the die to the position of a valid card, or activate a card on Disk 0");
+                ui.print("Enter the value (1 - " + NUM_SIDES_ON_DICE + ") of the die you wish to use to ACTIVATE A CARD");
+                input = ui.pickAnInt(1);
+                
+                // check that this die is unused
+                for (i = 1; i < NUM_DICE; i++) {
+                    
+                    if ((die[i].getValue() == input) && (!die[i].isUsed())) {
+                        
+                        usedDie = false;
+                        
+                    }
+                    
+                }
+                
+                if (usedDie) {
+                    
+                    ui.printE("This Die has been used");
+                    
+                }
                 
             }
+            
+            cardNum = validateActivate();
             
         }
         
@@ -215,33 +243,41 @@ public class Game {
         }
     }
 
-    private void validateActivate(int cardNum) {
-        
-        valid = false;
+    private int validateActivate() {
 
-        for (i = 0; (i < Game.NUM_DICE) && (!valid); i++) {
+        valid = false;
+        int cardNum = -1;
+        
+        while (!valid) {
             
-            // checks that the position is a valid card
-            if (players[whoseTurn()].getCardsInPlay()[cardNum] != Cards.NOTACARD) {
-                
-                // check that the die value matches the position
-                if (die[i].getValue() == input) {
+            ui.print("Enter the position (0 - " + NUM_SIDES_ON_DICE + ") of the card you wish to activate");
+            cardNum = ui.pickAnInt(0);
+
+            for (i = 0; (i < NUM_DICE) && (!valid); i++) {
+            
+                // checks that the position is a valid card
+                if (players[whoseTurn()].getCardsInPlay()[cardNum] != Cards.NOTACARD) {
                     
-                    valid = true;
-                    
-                } else if (input == 0) {
-                    
-                    // check player has at least as much money as the value of the die
-                    // subtract the value
-                    if (players[whoseTurn()].getMoney() < die[i].getValue()) {
+                    // check that the die value matches the position
+                    if (die[i].getValue() == input) {
                         
-                        ui.printE ("ERROR: Not enough money to activate this card");
+                        valid = true;
                         
-                    } else {
+                    } else if (input == 0) {
                         
-                        if (players[whoseTurn()].getCardsInPlay()[input] != Cards.NOTACARD) {
+                        // check player has at least as much money as the value of the die
+                        // subtract the value
+                        if (players[whoseTurn()].getMoney() < die[i].getValue()) {
                             
-                            valid = true;
+                            ui.printE ("ERROR: Not enough money to activate this card");
+                            
+                        } else {
+                            
+                            if (players[whoseTurn()].getCardsInPlay()[input] != Cards.NOTACARD) {
+                                
+                                valid = true;
+                                
+                            }
                             
                         }
                         
@@ -251,7 +287,15 @@ public class Game {
                 
             }
             
+            if (!valid) {
+                
+                ui.printE("Please match the value of the die to the position of a valid card, or activate a card on Disk 0");
+                
+            }
+            
         }
+        
+        return cardNum;
         
     }
 
@@ -298,6 +342,17 @@ public class Game {
             if (!valid) {
                 
                 ui.printE("Invalid Card Name");
+                
+            }
+            
+        }
+        
+        for (i = 1; i < NUM_DICE; i++) {
+            
+            if (die[i].getValue() == input) {
+                
+                die[i].use();
+                i = NUM_DICE;
                 
             }
             
@@ -404,7 +459,7 @@ public class Game {
         boolean sameDie = true;
         boolean reRoll = false;
         
-        for (i = 1; i < Game.NUM_DICE; i++) {
+        for (i = 0; i < Game.NUM_DICE; i++) {
 
             die[i].rollDie();
 

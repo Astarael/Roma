@@ -27,11 +27,12 @@ public class Deck {
     public final static int NUM_CONSILIARIUS = 2;
     public final static int NUM_TURRIS = 2;
     public final static int NUM_HARUSPEX = 2;
+    public final static int NUM_LEGIONARIUS = 3;
     
     public final static int NUM_SWAP = 4;
 
     public final static int NUM_CARDS = 52;
-    public final static int NUM_START_CARDS = 4;
+    public final static int NUM_START_CARDS = 5;
 
     private Cards[] cards;
     private Cards[] discard;
@@ -164,6 +165,13 @@ public class Deck {
         for (i = 0; i < NUM_HARUSPEX; i++) {
             
             cards[j] = Cards.HARUSPEX;
+            j++;
+            
+        }
+        
+        for (i = 0; i < NUM_LEGIONARIUS; i++) {
+            
+            cards[j] = Cards.LEGIONARIUS;
             j++;
             
         }

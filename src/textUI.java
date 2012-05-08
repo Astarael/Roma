@@ -92,7 +92,7 @@ public class textUI implements RomaUserInterface {
                 
             } else {
                 
-                System.out.println ("USED DIE");
+                System.out.print ("\t");
             }
             
         }

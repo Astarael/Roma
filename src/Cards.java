@@ -14,6 +14,7 @@ public enum Cards {
     GLADIATOR (1, 6, 5),
     HARUSPEX (0, 4, 3),
     LEGAT (1, 5, 2),
+    LEGIONARIUS (1, 4, 5),
     MACHINA (0, 4, 4),
     MERCATOR (1, 7, 2),
     MERCATUS (0, 6, 3),
@@ -35,6 +36,9 @@ public enum Cards {
     private int whoseTurn;
     private Player[] players;
     private Deck deck;
+    private Die[] dice;
+    
+    private static RomaUserInterface ui;
     
     Cards (int type, int cost, int defense) {
         
@@ -44,11 +48,18 @@ public enum Cards {
         
     }
     
-    public void activate (int w, Player[] p, Cards c, Deck d, int position, Die[] dice) {
+    public static void setUI (RomaUserInterface rui) {
+        
+        ui = rui;
+        
+    }
+    
+    public void activate (int w, Player[] p, Cards c, Deck d, int position, Die[] di) {
         
         whoseTurn = w;
         players = p;
         deck = d;
+        dice = di;
         
         if (c == MERCATOR) {
             
@@ -105,6 +116,44 @@ public enum Cards {
         } else if (c == HARUSPEX) {
             
             activateHaruspex();
+            
+        } else if (c == LEGIONARIUS) {
+            
+            activateLegionarius(position);
+            
+        }
+        
+    }
+    
+    
+    private void activateLegionarius(int position) {
+        
+        // show battle die
+        // compare battle die to opposite cards defense
+        // battledie >= defense value
+        if (players[(whoseTurn + 1) % Game.NUM_PLAYERS].getCardsInPlay()[position] == NOTACARD) {
+            
+            ui.printE("ERROR: No Card Opposite");
+            
+        } else {
+            
+            System.out.println("Battle!");
+            System.out.println(dice[0].getValue() + "");
+            
+            int dValue = players[whoseTurn + 1 % Game.NUM_PLAYERS].getCardsInPlay()[position].getDefenseValue();
+            System.out.println("Defense Value = " + dValue);
+            
+            if (dice[0].getValue() >= dValue) {
+                
+                ui.print("You Won the Battle!");
+                deck.discardCard (players[whoseTurn + 1 % Game.NUM_PLAYERS].getCardsInPlay()[position], 
+                        players[whoseTurn + 1 % Game.NUM_PLAYERS].getCardsInPlay());
+                
+            } else {
+                
+                System.out.println("You Lost the Battle!");
+                
+            }
             
         }
         
