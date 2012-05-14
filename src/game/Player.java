@@ -171,4 +171,16 @@ public class Player {
         return position;
     }
 
+    public void setMoney(int amount) {
+        
+        money = amount;
+        
+    }
+
+    public void setVictoryPoints(int points) {
+
+        victoryPoints = points;
+        
+    }
+
 }

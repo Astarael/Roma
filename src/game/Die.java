@@ -38,7 +38,7 @@ public class Die {
      */
     public int getValue () {
         
-        return this.value;
+        return value;
         
     }
     
@@ -51,6 +51,13 @@ public class Die {
     public void use () {
         
         used = true;
+    }
+
+
+    public void setValue(int i) {
+        
+        value = i;
+        
     }
 
 }

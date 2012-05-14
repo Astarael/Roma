@@ -117,10 +117,7 @@ public class Game {
             
             if (input == END_TURN) {
                 
-                turnNumber++;
-                subStartingVP();
-                while (rollDie()) { 
-                }
+                endTurn();
                 
             } else if (input == DRAW_CARD) {
                 
@@ -174,6 +171,13 @@ public class Game {
         
         return whoWon();
         
+    }
+
+    public void endTurn() {
+        turnNumber++;
+        subStartingVP();
+        while (rollDie()) { 
+        }
     }
 
 
@@ -643,6 +647,13 @@ public class Game {
         
         
         return die;
+        
+    }
+
+    public void setWhoseTurn(int player) {
+
+        // probably not the best way of doing this, but it works.....
+        turnNumber = player;
         
     }
 
