@@ -40,8 +40,8 @@ public class Deck {
     public final static int NUM_CARDS = 52;
     public final static int NUM_START_CARDS = 5;
 
-    private Cards[] cards;
-    private Cards[] discard;
+    private Card[] cards;
+    private Card[] discard;
     
     private RomaUserInterface ui;
     private Player[] players;
@@ -55,163 +55,163 @@ public class Deck {
         ui = rui;
         this.players = players;
         
-        cards = new Cards[NUM_CARDS];
-        discard = new Cards[NUM_CARDS];
+        cards = new Card[NUM_CARDS];
+        discard = new Card[NUM_CARDS];
 
         for (i = 0; i < NUM_MERCATOR; i++) {
             
-            cards[j] = Cards.MERCATOR;
-            Cards.MERCATOR.setUI(ui);
+            cards[j] = Card.MERCATOR;
+            Card.MERCATOR.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_TRIBUNUS_PLEBIS; i++) {
         
-            cards[j] = Cards.TRIBUNUSPLEBIS;
-            Cards.TRIBUNUSPLEBIS.setUI(ui);
+            cards[j] = Card.TRIBUNUSPLEBIS;
+            Card.TRIBUNUSPLEBIS.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_FORUM; i++) {
             
-            cards[j] = Cards.FORUM;
-            Cards.FORUM.setUI(ui);
+            cards[j] = Card.FORUM;
+            Card.FORUM.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_SICARIUS; i++) {
             
-            cards[j] = Cards.SICARIUS;
-            Cards.SICARIUS.setUI(ui);
+            cards[j] = Card.SICARIUS;
+            Card.SICARIUS.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_NERO; i++) {
             
-            cards[j] = Cards.NERO;
-            Cards.NERO.setUI(ui);
+            cards[j] = Card.NERO;
+            Card.NERO.setUI(ui);
             j++;
             
         }
 
         for (i = 0; i < NUM_MERCATUS; i++) {
             
-            cards[j] = Cards.MERCATUS;
-            Cards.MERCATUS.setUI(ui);
+            cards[j] = Card.MERCATUS;
+            Card.MERCATUS.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_BASILICA; i++) {
             
-            cards[j] = Cards.BASILICA;
-            Cards.BASILICA.setUI(ui);
+            cards[j] = Card.BASILICA;
+            Card.BASILICA.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_TEMPLUM; i++) {
             
-            cards[j] = Cards.TEMPLUM;
-            Cards.TEMPLUM.setUI(ui);
+            cards[j] = Card.TEMPLUM;
+            Card.TEMPLUM.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_LEGAT; i++) {
             
-            cards[j] = Cards.LEGAT;
-            Cards.LEGAT.setUI(ui);
+            cards[j] = Card.LEGAT;
+            Card.LEGAT.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_ARCHITECTUS; i++) {
             
-            cards[j] = Cards.ARCHITECTUS;
-            Cards.ARCHITECTUS.setUI(ui);
+            cards[j] = Card.ARCHITECTUS;
+            Card.ARCHITECTUS.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_SENATOR; i++) {
             
-            cards[j] = Cards.SENATOR;
-            Cards.SENATOR.setUI(ui);
+            cards[j] = Card.SENATOR;
+            Card.SENATOR.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_AESCULAPINUM; i++) {
             
-            cards[j] = Cards.AESCULAPINUM;
-            Cards.AESCULAPINUM.setUI(ui);
+            cards[j] = Card.AESCULAPINUM;
+            Card.AESCULAPINUM.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_MACHINA; i++) {
             
-            cards[j] = Cards.MACHINA;
-            Cards.MACHINA.setUI(ui);
+            cards[j] = Card.MACHINA;
+            Card.MACHINA.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_CONSILIARIUS; i++) {
             
-            cards[j] = Cards.CONSILIARIUS;
-            Cards.CONSILIARIUS.setUI(ui);
+            cards[j] = Card.CONSILIARIUS;
+            Card.CONSILIARIUS.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_GLADIATOR; i++) {
             
-            cards[j] = Cards.GLADIATOR;
-            Cards.GLADIATOR.setUI(ui);
+            cards[j] = Card.GLADIATOR;
+            Card.GLADIATOR.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_TURRIS; i++) {
             
-            cards[j] = Cards.TURRIS;
-            Cards.TURRIS.setUI(ui);
+            cards[j] = Card.TURRIS;
+            Card.TURRIS.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_HARUSPEX; i++) {
             
-            cards[j] = Cards.HARUSPEX;
-            Cards.HARUSPEX.setUI(ui);
+            cards[j] = Card.HARUSPEX;
+            Card.HARUSPEX.setUI(ui);
             j++;
             
         }
         
         for (i = 0; i < NUM_LEGIONARIUS; i++) {
             
-            cards[j] = Cards.LEGIONARIUS;
-            Cards.LEGIONARIUS.setUI(ui);
+            cards[j] = Card.LEGIONARIUS;
+            Card.LEGIONARIUS.setUI(ui);
             j++;
             
         }
         
         for (; j < NUM_CARDS; j++) {
             
-            cards[j] = Cards.NOTACARD;
-            Cards.NOTACARD.setUI(ui);
+            cards[j] = Card.NOTACARD;
+            Card.NOTACARD.setUI(ui);
             
         }
         
         for (i = 0; i < NUM_CARDS; i++) {
             
-            discard[i] = Cards.NOTACARD;
+            discard[i] = Card.NOTACARD;
             
         }
 
@@ -219,19 +219,19 @@ public class Deck {
         
     }
     
-    public Cards[] getCards () {
+    public Card[] getCards () {
         
         return cards;
         
     }
     
-    public void setCards (Cards[] c) {
+    public void setCards (Card[] c) {
         
         cards = c;
         
     }
     
-    public Cards[] getDiscard () {
+    public Card[] getDiscard () {
         
         return discard;
         
@@ -243,8 +243,8 @@ public class Deck {
         int i;
         int j;
         int k;
-        Cards draw;
-        Cards swap[] = new Cards[NUM_SWAP];
+        Card draw;
+        Card swap[] = new Card[NUM_SWAP];
         
         for (i = 0; i < Game.NUM_PLAYERS; i++) {
             
@@ -272,16 +272,16 @@ public class Deck {
     }
     
     
-    public Cards drawCard () {
+    public Card drawCard () {
         
-        Cards temp = Cards.NOTACARD;
+        Card temp = Card.NOTACARD;
         int j = 0;
         
-        while (temp == Cards.NOTACARD) {
+        while (temp == Card.NOTACARD) {
         
             for (j = 0; j < NUM_CARDS; j++) {
             
-                if (cards[j] != Cards.NOTACARD) {
+                if (cards[j] != Card.NOTACARD) {
                 
                     temp = cards[j];
                     discardCard(cards[j], cards);
@@ -291,13 +291,13 @@ public class Deck {
                 
             }
             
-            if (temp == Cards.NOTACARD) {
+            if (temp == Card.NOTACARD) {
                 
                 // shuffle old discard pile
                 Collections.shuffle(Arrays.asList(discard));
                 
                 // swap discard pile and cards pile
-                Cards[] swap = discard;
+                Card[] swap = discard;
                 discard = cards;
                 cards = swap;
                 
@@ -319,12 +319,12 @@ public class Deck {
     }
     
     
-    public void discardCard (Cards c, Cards[] hand) {
+    public void discardCard (Card c, Card[] hand) {
         
         int i;
         for (i = 0; i < NUM_CARDS; i++) {
             
-            if (discard[i] == Cards.NOTACARD) {
+            if (discard[i] == Card.NOTACARD) {
                 
                 discard[i] = c;
                 i = NUM_CARDS;
@@ -337,7 +337,7 @@ public class Deck {
             
             if (c == hand[i]) {
                 
-                hand[i] = Cards.NOTACARD;
+                hand[i] = Card.NOTACARD;
                 i = hand.length;
                 
             }
@@ -346,13 +346,13 @@ public class Deck {
         
     }
     
-    private Cards getSwapCard (int whoseTurn, Cards[] hand) {
+    private Card getSwapCard (int whoseTurn, Card[] hand) {
         
-        Cards result = Cards.NOTACARD;
+        Card result = Card.NOTACARD;
         int i;
-        Cards swap;
+        Card swap;
         
-        while (result == Cards.NOTACARD) {
+        while (result == Card.NOTACARD) {
         
             ui.print("Pick the card you want to swap (PLAYER " + 
                     whoseTurn + "). (type in the full name)");
@@ -370,7 +370,7 @@ public class Deck {
             
             }
             
-            if (result == Cards.NOTACARD) {
+            if (result == Card.NOTACARD) {
                 
                 ui.printE ("ERROR: Invalid Card name");
                 
@@ -383,7 +383,7 @@ public class Deck {
     }
     
     
-    private void swapCards (Cards[] swap, Cards[] p1Hand, Cards[] p2Hand) {
+    private void swapCards (Card[] swap, Card[] p1Hand, Card[] p2Hand) {
         
         // find the cards in the player hand
         int i;
@@ -420,6 +420,30 @@ public class Deck {
             }
             
         }
+        
+    }
+
+    public void emptyDeck() {
+        
+        cards = new Card[NUM_CARDS];
+        
+    }
+
+    public void addCard(Card c) {
+        
+        int i = 0;
+        
+        for (i = 0; i < NUM_CARDS; i++) {
+
+            if (cards[i] == Card.NOTACARD) {
+                
+                cards[i] = c;
+                
+            }
+            
+        }
+        
+        
         
     }
 

@@ -138,7 +138,7 @@ public class Tests {
         
         System.out.println ("Starting Mercator Tests");
         
-        Cards c = Cards.MERCATOR;
+        Card c = Card.MERCATOR;
         assert (c.getDefenseValue() == 2);
         assert (c.getMoneyCost() == 7);
         assert (c.getType() == Card.CHARACTER);
@@ -153,7 +153,7 @@ public class Tests {
         
         System.out.println ("Starting Forum Tests");
         
-        Cards c = Cards.FORUM;
+        Card c = Card.FORUM;
         assert (c.getDefenseValue() == 5);
         assert (c.getMoneyCost() == 5);
         assert (c.getType() == Card.BUILDING);
@@ -168,7 +168,7 @@ public class Tests {
         
         System.out.println ("Starting Tribunus Plebis Tests");
         
-        Cards c = Cards.TRIBUNUSPLEBIS;
+        Card c = Card.TRIBUNUSPLEBIS;
         assert (c.getDefenseValue() == 5);
         assert (c.getMoneyCost() == 5);
         assert (c.getType() == Card.CHARACTER);

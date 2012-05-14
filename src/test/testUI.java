@@ -13,7 +13,7 @@ import cards.*;
 public class testUI implements RomaUserInterface {
 
     public void displayBoard(int player1vp, int player2vp, int player1m,
-            int player2m, int turn, Cards[] p1Cards, Cards[] p2Cards) {
+            int player2m, int turn, Card[] p1Cards, Card[] p2Cards) {
         // TODO Auto-generated method stub
 
     }
@@ -23,7 +23,7 @@ public class testUI implements RomaUserInterface {
 
     }
 
-    public Cards pickACard() {
+    public Card pickACard() {
         
         return null;
     }

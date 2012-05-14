@@ -280,4 +280,5 @@ public interface GameState {
     * @return whether a game has come to completion
     */
    public boolean isGameCompleted();
+
 }

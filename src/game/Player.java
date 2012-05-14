@@ -13,8 +13,8 @@ public class Player {
     
     private int victoryPoints;
     private int money;
-    private Cards[] hand;
-    private Cards[] cardsInPlay;
+    private Card[] hand;
+    private Card[] cardsInPlay;
     private RomaUserInterface ui;
     
     /**
@@ -28,20 +28,20 @@ public class Player {
         
         this.victoryPoints = Game.START_VICTORY_POINTS;
         this.money = Game.START_MONEY;
-        this.hand = new Cards[Deck.NUM_CARDS];
+        this.hand = new Card[Deck.NUM_CARDS];
         
         for (i = 0; i < Deck.NUM_CARDS; i++) {
             
-            hand[i] = Cards.NOTACARD;
+            hand[i] = Card.NOTACARD;
             
         }
         
         // this array is 7 long, the 0th is blank
-        cardsInPlay = new Cards[Game.NUM_SIDES_ON_DICE + 1];
+        cardsInPlay = new Card[Game.NUM_SIDES_ON_DICE + 1];
         
         for (i = 0; i < Game.NUM_SIDES_ON_DICE + 1; i++) {
             
-            cardsInPlay[i] = Cards.NOTACARD;
+            cardsInPlay[i] = Card.NOTACARD;
             
         }
         
@@ -70,7 +70,7 @@ public class Player {
         
     }
     
-    public Cards[] getHand() {
+    public Card[] getHand() {
         
         
         return this.hand;
@@ -103,12 +103,12 @@ public class Player {
         
     }
     
-    public void addCard (Cards draw) {
+    public void addCard (Card draw) {
         
         int i;
         for (i = 0; i < hand.length; i++) {
             
-            if (hand[i] == Cards.NOTACARD) {
+            if (hand[i] == Card.NOTACARD) {
                 
                 hand[i] = draw;
                 i = hand.length;
@@ -119,16 +119,16 @@ public class Player {
         
     }
     
-    public Cards[] getCardsInPlay () {
+    public Card[] getCardsInPlay () {
         
         return cardsInPlay;
         
     }
     
     // discard the other card
-    public Cards layCard (Cards c, int position) {
+    public Card layCard (Card c, int position) {
         
-        Cards temp = cardsInPlay[position];
+        Card temp = cardsInPlay[position];
             
         cardsInPlay[position] = c;
         
@@ -138,7 +138,7 @@ public class Player {
             
             if (hand[i] == c) {
                 
-                hand[i] = Cards.NOTACARD;
+                hand[i] = Card.NOTACARD;
                 i = hand.length;
                 
             }
@@ -151,7 +151,7 @@ public class Player {
     }
 
 
-    public int getPosition (Cards c) {
+    public int getPosition (Card c) {
         
         int position = 0;
         int i;

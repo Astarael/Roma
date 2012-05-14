@@ -13,12 +13,12 @@ import cards.*;
 public interface RomaUserInterface {
     
     public void displayBoard (int player1VP, int player2VP, int player1M, int player2M,
-            int turn, Cards[] p1Cards, Cards[] p2Cards);
+            int turn, Card[] p1Cards, Card[] p2Cards);
     public void printDie (Die[] die);
     /**
      * Only checks that the string that is entered is a valid card name
      */
-    public Cards pickACard ();
+    public Card pickACard ();
     /**
      * Returns an int between 0 and 6 inclusive.
      */

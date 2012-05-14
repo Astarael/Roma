@@ -29,7 +29,7 @@ public class textUI implements RomaUserInterface {
 
     
     public void displayBoard(int player1VP, int player2VP, int player1M,
-            int player2M, int turn, Cards[] p1Cards, Cards[] p2Cards) {
+            int player2M, int turn, Card[] p1Cards, Card[] p2Cards) {
         
         print ("Player 1\t\t\tPlayer 2");
         
@@ -44,13 +44,13 @@ public class textUI implements RomaUserInterface {
 
     }
 
-    private void printCards(Cards[] p1Cards, Cards[] p2Cards) {
+    private void printCards(Card[] p1Cards, Card[] p2Cards) {
         
         for (i = 0; i <= Game.NUM_SIDES_ON_DICE; i++) {
             
             // formatting somehow
             System.out.print("\t");
-            if (p1Cards[i] != Cards.NOTACARD){
+            if (p1Cards[i] != Card.NOTACARD){
                 
                 System.out.print(p1Cards[i] + "\t");
                 
@@ -62,7 +62,7 @@ public class textUI implements RomaUserInterface {
                 
             System.out.print("   \t(" + i + ")\t");
             
-            if (p2Cards[i] != Cards.NOTACARD){
+            if (p2Cards[i] != Card.NOTACARD){
                 
                 System.out.print("\t" + p2Cards[i]);
                 
@@ -108,7 +108,7 @@ public class textUI implements RomaUserInterface {
     }
 
     
-    public Cards pickACard() {
+    public Card pickACard() {
         
         valid = false;
         String s = "";
@@ -118,7 +118,7 @@ public class textUI implements RomaUserInterface {
             s = sc.next();
             s = s.toUpperCase();
             
-            if (Cards.isCard(s)) {
+            if (Card.isCard(s)) {
                 
                 valid = true;
                 
@@ -131,7 +131,7 @@ public class textUI implements RomaUserInterface {
         }
         
         
-        return Cards.valueOf(s);
+        return Card.valueOf(s);
     }
 
     

@@ -174,10 +174,12 @@ public class Game {
     }
 
     public void endTurn() {
+        
         turnNumber++;
         subStartingVP();
         while (rollDie()) { 
         }
+        
     }
 
 
@@ -236,7 +238,7 @@ public class Game {
             
         }
         
-        Cards[] cards = players[whoseTurn()].getCardsInPlay();
+        Card[] cards = players[whoseTurn()].getCardsInPlay();
         
         if (cards[cardNum].isActivatable(cards[cardNum])) {
         
@@ -280,7 +282,7 @@ public class Game {
             for (i = 0; (i < NUM_DICE) && (!valid); i++) {
             
                 // checks that the position is a valid card
-                if (players[whoseTurn()].getCardsInPlay()[cardNum] != Cards.NOTACARD) {
+                if (players[whoseTurn()].getCardsInPlay()[cardNum] != Card.NOTACARD) {
                     
                     // check that the die value matches the position
                     if (die[i].getValue() == input) {
@@ -297,7 +299,7 @@ public class Game {
                             
                         } else {
                             
-                            if (players[whoseTurn()].getCardsInPlay()[input] != Cards.NOTACARD) {
+                            if (players[whoseTurn()].getCardsInPlay()[input] != Card.NOTACARD) {
                                 
                                 valid = true;
                                 
@@ -337,7 +339,7 @@ public class Game {
         
         ui.print ("You drew:");
         
-        Cards[] draw = new Cards[input];
+        Card[] draw = new Card[input];
         for (i = 0; i < draw.length; i++) {
             
             draw[i] = deck.drawCard();
@@ -348,14 +350,14 @@ public class Game {
         while (!valid) {
             
             ui.print("\nWhich card would you like to keep?");
-            Cards c = ui.pickACard();
+            Card c = ui.pickACard();
             
             for (i = 0; i < draw.length; i++) {
                 
                 if (c == draw[i]) {
                     
                     players[whoseTurn()].addCard(draw[i]);
-                    draw[i] = Cards.NOTACARD;
+                    draw[i] = Card.NOTACARD;
                     i = draw.length;
                     valid = true;
                     
@@ -387,15 +389,15 @@ public class Game {
 
     private void layCard() {
         
-        Cards[] hand = players[whoseTurn()].getHand();
-        Cards lay = Cards.NOTACARD;
+        Card[] hand = players[whoseTurn()].getHand();
+        Card lay = Card.NOTACARD;
         boolean correctCard = false;
         
         ui.print("Your hand contains:");
         
         for (i = 0; i < hand.length; i++) {
 
-            if (hand[i] != Cards.NOTACARD) {
+            if (hand[i] != Card.NOTACARD) {
                 
                 ui.print(hand[i].toString());
                 
@@ -465,7 +467,7 @@ public class Game {
         // subtract 1 VP for each unoccupied dice disk
         for (i = 0; i <= NUM_SIDES_ON_DICE; i++) {
             
-            if (players[whoseTurn()].getCardsInPlay()[i] == Cards.NOTACARD) {
+            if (players[whoseTurn()].getCardsInPlay()[i] == Card.NOTACARD) {
                 
                 counter++;
                 
@@ -590,7 +592,7 @@ public class Game {
         int j;
         int k;
         int position;
-        Cards temp1;
+        Card temp1;
         
         for (i = 0; i < NUM_PLAYERS; i++) {
             
@@ -619,7 +621,7 @@ public class Game {
                     
                     temp1 = players[i].getCardsInPlay()[k];
                     
-                    if (temp1 != Cards.NOTACARD){
+                    if (temp1 != Card.NOTACARD){
                         
                         ui.print("**CARD**");
                         

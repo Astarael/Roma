@@ -6,17 +6,19 @@
 package classAcceptanceInterface;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import cards.Cards;
+import cards.Card;
 
 import framework.Rules;
-import framework.cards.Card;
 import framework.interfaces.GameState;
 import game.*;
 import test.testUI;
 import userInterface.*;
+import cards.*;
+import framework.cards.*;
 
 public class GameStateAdapter implements GameState {
     
@@ -49,35 +51,27 @@ public class GameStateAdapter implements GameState {
     @Override
     public List<Card> getDeck() {
         
-        Deck d = g.getDeck();
-        List<Cards> l = new ArrayList<Cards>();
-        
-        for (i = 0; i < Deck.NUM_CARDS; i++) {
-            
-            l.add(d.drawCard());
-            
-        }
+        List<Card> l = Arrays.asList(g.getDeck().getCards());
         
         return l;
     }
 
     @Override
     public void setDeck(List<Card> deck) {
-        // TODO Auto-generated method stub
+        
+        g.getDeck().emptyDeck();
+        for (Card c : deck) {
+            
+            g.getDeck().addCard(c);
+            
+        }
         
     }
 
     @Override
     public List<Card> getDiscard() {
         
-        Cards[] discard = g.getDeck().getDiscard();
-        List<Cards> l = new ArrayList<Cards>();
-        
-        for (i = 0; i < Deck.NUM_CARDS; i++) {
-            
-            l.add(discard[i]);
-            
-        }
+        List<Card> l = Arrays.asList(g.getDeck().getDiscard());
         
         return l;
     }
@@ -85,9 +79,9 @@ public class GameStateAdapter implements GameState {
     @Override
     public void setDiscard(List<Card> discard) {
         
-        while (!discard.isEmpty()) {
+        for (Card c : discard) {
             
-            g.getDeck().discardCard(discard.remove(0), null);
+            g.getDeck().discardCard(c, null);
             
         }
         
@@ -123,17 +117,18 @@ public class GameStateAdapter implements GameState {
 
     @Override
     public Collection<Card> getPlayerHand(int playerNum) {
-        // TODO Auto-generated method stub
-        return null;
+
+        Collection<Card> c =  Arrays.asList(g.players[playerNum].getHand());
+        return c;
     }
 
     @Override
     public void setPlayerHand(int playerNum, Collection<Card> hand) {
-        
-        while (!hand.isEmpty()) {
             
-            g.players[playerNum].addCard(hand.remove(0));
-            
+        for (Card c : hand) {
+                
+            g.players[playerNum].addCard(c);
+                
         }
         
     }
@@ -201,5 +196,16 @@ public class GameStateAdapter implements GameState {
         
     }
 
-    
+    @Override
+    public void setPlayerCardsOnDiscs(int playerNum,
+            framework.cards.Card[] discCards) {
+        
+        for (int i = 0; i < Rules.NUM_DICE_DISCS; i++) {
+        
+            g.players[playerNum].layCard(discCards[i], i + 1);
+            
+        }
+        
+    }
+
 }

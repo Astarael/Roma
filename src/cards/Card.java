@@ -9,7 +9,7 @@ import game.*;
  * 11/04/2012
  */
 
-public enum Cards {
+public enum Card {
     
     AESCULAPINUM (0, 5, 2),
     ARCHITECTUS (1, 3, 4),
@@ -45,7 +45,7 @@ public enum Cards {
     
     private RomaUserInterface ui;
     
-    Cards (int type, int cost, int defense) {
+    Card (int type, int cost, int defense) {
         
         this.type = type;
         this.moneyCost = cost;
@@ -59,7 +59,7 @@ public enum Cards {
         
     }
     
-    public void activate (int w, Player[] p, Cards c, Deck d, int position, Die[] di) {
+    public void activate (int w, Player[] p, Card c, Deck d, int position, Die[] di) {
         
         whoseTurn = w;
         players = p;
@@ -185,7 +185,7 @@ public enum Cards {
         
         while (!valid) {
             
-            Cards card = ui.pickACard();
+            Card card = ui.pickACard();
             for (i = 0; i < deck.getCards().length; i++) {
                 
                 if (card == deck.getCards()[i]) {
@@ -219,7 +219,7 @@ public enum Cards {
         while (!valid) {
             
             ui.print("Which card would you like to return?");
-            Cards card = ui.pickACard();
+            Card card = ui.pickACard();
             
             for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
                 
@@ -255,7 +255,7 @@ public enum Cards {
         
         Boolean hasCharacters = false;
         Boolean valid = false;
-        Cards[] temp = new Cards[Game.NUM_SIDES_ON_DICE];
+        Card[] temp = new Card[Game.NUM_SIDES_ON_DICE];
         int j = 0;
         
         for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
@@ -310,7 +310,7 @@ public enum Cards {
         // re-place building cards
         Boolean hasBuildings = false;
         Boolean valid = false;
-        Cards[] temp = new Cards[Game.NUM_SIDES_ON_DICE];
+        Card[] temp = new Card[Game.NUM_SIDES_ON_DICE];
         int j = 0;
         
         for (i = 0; i < Game.NUM_SIDES_ON_DICE; i++) {
@@ -364,7 +364,7 @@ public enum Cards {
         // show the chars from discard pile
         // player selects which card
         // add that card to players hand
-        Cards[] discard = deck.getDiscard();
+        Card[] discard = deck.getDiscard();
         Boolean noCharCards = true;
         
         for (i = 0; i < Deck.NUM_CARDS; i++) {
@@ -396,7 +396,7 @@ public enum Cards {
             while (!valid) {
         
                 ui.print("Which card would you like to draw?");
-                Cards card = ui.pickACard();
+                Card card = ui.pickACard();
             
                 for (i = 0; i < Deck.NUM_CARDS; i++) {
                 
@@ -434,9 +434,9 @@ public enum Cards {
         // refund cost
         
         boolean finished = false;
-        Cards[] hand = players[whoseTurn].getHand();
+        Card[] hand = players[whoseTurn].getHand();
         ui.print("Your Hand:");
-        Cards card;
+        Card card;
         position = 0;
         
         for (i = 0; i < hand.length; i++) {
@@ -486,9 +486,9 @@ public enum Cards {
         // refund cost
         
         boolean finished = false;
-        Cards[] hand = players[whoseTurn].getHand();
+        Card[] hand = players[whoseTurn].getHand();
         ui.print("Your Hand:");
-        Cards card;
+        Card card;
         position = 0;
         
         for (i = 0; i < hand.length; i++) {
@@ -546,7 +546,7 @@ public enum Cards {
         
     }
 
-    private void activateNero(Cards c) {
+    private void activateNero(Card c) {
         
         int place = -1;
         
@@ -581,7 +581,7 @@ public enum Cards {
         // subtract 1 VP for each unoccupied dice disk
         for (i = 1; i <= Game.NUM_SIDES_ON_DICE; i++) {
             
-            if (players[whoseTurn + 1 % Game.NUM_PLAYERS].getCardsInPlay()[i] == Cards.NOTACARD) {
+            if (players[whoseTurn + 1 % Game.NUM_PLAYERS].getCardsInPlay()[i] == Card.NOTACARD) {
                 
                 counter++;
                 
@@ -593,7 +593,7 @@ public enum Cards {
         
     }
 
-    private void activateSicarius(Cards c) {
+    private void activateSicarius(Card c) {
         
         int place = 0;
         
@@ -786,7 +786,7 @@ public enum Cards {
         
     }
     
-    public boolean isActivatable (Cards c) {
+    public boolean isActivatable (Card c) {
         
         boolean result = true;
         
@@ -805,7 +805,7 @@ public enum Cards {
         
         boolean valid = false;
             
-        for (Cards c : Cards.values()) {
+        for (Card c : Card.values()) {
                 
             // compare c to the uppercase version of s
             try { 
