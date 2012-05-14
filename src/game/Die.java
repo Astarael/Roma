@@ -30,6 +30,7 @@ public class Die {
         
         // Math.random returns a double [0-1] so * 100 % 6 + 1
         this.value = (int) (Math.random() * 100) % Game.NUM_SIDES_ON_DICE + 1;
+        this.used = false;
         
     }
     
